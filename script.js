@@ -1,5 +1,5 @@
 window.onload = function () {
-  //The initial setup
+  // Setup inicial de start das damas.
   var gameBoard = [
     [0, 2, 0, 2, 0, 2, 0, 2],
     [2, 0, 2, 0, 2, 0, 2, 0],
@@ -11,8 +11,8 @@ window.onload = function () {
     [1, 0, 1, 0, 1, 0, 1, 0]
   ]
   //arrays to store the instances
-  var pieces = [];
-  var tiles = [];
+  var pieces = []; // Peças
+  var tiles = []; // Espaço Vazio
 
   //distance formula
   var dist = function (x1, y1, x2, y2) {
@@ -44,20 +44,20 @@ window.onload = function () {
     this.move = function (tile) {
       this.element.removeClass('selected');
       if (!Board.isValidPlacetoMove(tile.position[0], tile.position[1])) return false;
-      //make sure piece doesn't go backwards if it's not a king
+      //certifique-se de que a peça não retroceda se não for uma dama
       if (this.player == 1 && this.king == false) {
         if (tile.position[0] < this.position[0]) return false;
       } else if (this.player == 2 && this.king == false) {
         if (tile.position[0] > this.position[0]) return false;
       }
-      //remove the mark from Board.board and put it in the new spot
+      //remova a marca do Board.board e coloque-a no novo local
       Board.board[this.position[0]][this.position[1]] = 0;
       Board.board[tile.position[0]][tile.position[1]] = this.player;
       this.position = [tile.position[0], tile.position[1]];
       //change the css using board's dictionary
       this.element.css('top', Board.dictionary[this.position[0]]);
       this.element.css('left', Board.dictionary[this.position[1]]);
-      //if piece reaches the end of the row on opposite side crown it a king (can move all directions)
+      //Se a peça chegar ao final da linha no lado oposto, coroe-a como um rei (pode se mover em todas as direções)
       if (!this.king && (this.position[0] == 0 || this.position[0] == 7))
         this.makeKing();
       return true;
@@ -142,6 +142,7 @@ window.onload = function () {
     //if tile is in range from the piece
     this.inRange = function (piece) {
       for (let k of pieces)
+        // Impede voltas de jogadas a menos que seja para comer
         if (k.position[0] == this.position[0] && k.position[1] == this.position[1]) return 'wrong';
       if (!piece.king && piece.player == 1 && this.position[0] < piece.position[0]) return 'wrong';
       if (!piece.king && piece.player == 2 && this.position[0] > piece.position[0]) return 'wrong';
@@ -294,12 +295,13 @@ window.onload = function () {
           $(this).addClass('selected');
         }
       } else {
-        let exist = "jump exist for other pieces, that piece is not allowed to move"
-        let continuous = "continuous jump exist, you have to jump the same piece"
+        let exist = "Essa peça não tem permissão para se mover"
+        let continuous = "você tem que pular a mesma peça"
         let message = !Board.continuousjump ? exist : continuous
-        console.log(message)
+        window.alert(message)
       }
     }
+    window.alert('Vez do outro Jogador')
   });
 
   //reset game when clear button is pressed
