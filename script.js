@@ -299,9 +299,13 @@ window.onload = function () {
         let continuous = "você tem que pular a mesma peça"
         let message = !Board.continuousjump ? exist : continuous
         window.alert(message)
+        msg.setText(message)
       }
+    }else{
+      window.alert('Vez do outro Jogador')
+      msg.setText(Html.fromHtml("<u>Vez do outro Jogador</u>"))
     }
-    window.alert('Vez do outro Jogador')
+    
   });
 
   //reset game when clear button is pressed
