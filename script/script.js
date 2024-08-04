@@ -45,11 +45,11 @@ window.onload = function () {
       this.element.removeClass('selected');
       if (!Board.isValidPlacetoMove(tile.position[0], tile.position[1])) return false;
       //certifique-se de que a peça não retroceda se não for uma dama
-      if (this.player == 1 && this.king == false) {
-        if (tile.position[0] < this.position[0]) return false;
-      } else if (this.player == 2 && this.king == false) {
-        if (tile.position[0] > this.position[0]) return false;
-      }
+      // if (this.player == 1 && this.king == false) {
+      //   if (tile.position[0] < this.position[0]) return false;
+      // } else if (this.player == 2 && this.king == false) {
+      //   if (tile.position[0] > this.position[0]) return false;
+      // }
       //remova a marca do Board.board e coloque-a no novo local
       Board.board[this.position[0]][this.position[1]] = 0;
       Board.board[tile.position[0]][tile.position[1]] = this.player;
@@ -76,17 +76,21 @@ window.onload = function () {
       //find what the displacement is
       var dx = newPosition[1] - this.position[1];
       var dy = newPosition[0] - this.position[0];
+      
       //make sure object doesn't go backwards if not a king
-      if (this.player == 2 && this.king == false) {
-        if (newPosition[0] < this.position[0]) return false;
-      } else if (this.player == 2 && this.king == false) {
-        if (newPosition[0] > this.position[0]) return false;
-      }
+      // if (this.player == 1 && this.king == false) {
+      //   if (newPosition[0] < this.position[0]) return false;
+      // } else if (this.player == 1 && this.king == false) {
+      //   if (newPosition[0] > this.position[0]) return false;
+      // }
+
+      // ceca se a peça normal não está dandando mais de 2 casas
+      //if(Math.abs(dx) == 2 && Math.abs(dy) == 2 && this.king == false) return false;
       //must be in bounds
       if (newPosition[0] > 7 || newPosition[1] > 7 || newPosition[0] < 0 || newPosition[1] < 0) return false;
       //middle tile where the piece to be conquered sits
-      var tileToCheckx = this.position[1] + dx / 2;
-      var tileToChecky = this.position[0] + dy / 2;
+      var tileToCheckx = this.position[1] + dx / 2; // x da peça a ser capturada
+      var tileToChecky = this.position[0] + dy / 2; // y da peça a ser capturada
       if (tileToCheckx > 7 || tileToChecky > 7 || tileToCheckx < 0 || tileToChecky < 0) return false;
       //if there is a piece there and there is no piece in the space after that
       if (!Board.isValidPlacetoMove(tileToChecky, tileToCheckx) && Board.isValidPlacetoMove(newPosition[0], newPosition[1])) {
@@ -141,23 +145,23 @@ window.onload = function () {
     this.position = position;
     //se a peça está em alcence de caputra
     this.inRange = function (piece) {
-      /*
-       * pieace - posição da peça selecionada
-       */
-      for (let k of pieces){
-        var isCapture = false // é pra a capturar?
-        if(piece.player != k.player){
-          if(k.position[0] > piece.position[0] && k.position[0] < this.position[0]
-            && k.position[1] > piece.position[1] && k.position[1] < this.position[1]){
-              isCapture = true
-          }
-          if(k.position[0] < piece.position[0] && k.position[0] > this.position[0]
-            && k.position[1] < piece.position[1] && k.position[1] > this.position[1]){
-              isCapture = true
-          }
-          
+      // Checa se no intervalo ah uma peça de caputra
+      var isCapture = false
+      // Posição final - inicial
+      var dy = piece.position[1] - (this.position[1])
+      var dx = piece.position[0] - (this.position[0])      
+      if(Math.abs(dx) == 2 && Math.abs(dy) == 2){
+        var cDx = dx / 2
+        var cDy = dy / 2
+        for(let p of pieces ){
+          if (p.position[0] == piece.position[0] - cDx && p.position[1] == piece.position[1] - cDy && p.player != piece.player) isCapture = true;
         }
+      }
+
+      for (let k of pieces){
+        
         if (k.position[0] == this.position[0] && k.position[1] == this.position[1]) return 'wrong'; // impede que uma a peça vá para um slot com outra peça
+
         // Checa se é pra captura de peça
         if (!piece.king && piece.player == 1 && this.position[0] < piece.position[0] && !isCapture) return 'wrong'; // checa se ele ta voltando a jogada com as pretas
         if (!piece.king && piece.player == 2 && this.position[0] > piece.position[0] && !isCapture) return 'wrong'; // checa se ele ta voltando a jogada com as brancas
