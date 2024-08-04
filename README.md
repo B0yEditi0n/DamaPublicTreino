@@ -5,7 +5,7 @@ Primeiro irei listar as funcionalidades que deverão ser adicionadas no software
 - [ ] Régua, em baixo colocar horizontal, e numeros na vertical
 - [X] Pedras Brancas e pretas, Contraste Verde e Branco (Estilo)
 - [ ] Inverter, começa são de baixo
-- [ ] Deixar mais evidente qual PC roda
+- [ ] Evidenciar qual peças estão jogando.
 - [ ] Concertar Lógica de Comer para trás, e revisar lógica de obrigatoriedade da captura.
 
 ## Repositórios que posso usar de base
