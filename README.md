@@ -10,3 +10,6 @@ Primeiro irei listar as funcionalidades que deverão ser adicionadas no software
 
 ## Repositórios que posso usar de base
 https://github.com/codethejason/checkers?tab=readme-ov-file
+
+## Site de Acesso
+https://b0yediti0n.github.io/DamaPublicTreino/
