@@ -62,7 +62,7 @@ div.stats {
     display: inline-block;
     width: 50%;
     float: left;
-    background-color: #B93848;
+    background-color: #ffffff;
     box-sizing: border-box;
     padding: 0 15px 20px;
     border-top-left-radius: 3px;
@@ -88,11 +88,11 @@ div.stats {
     box-sizing: border-box;
     padding: 0 15px 20px;
     border-top-right-radius: 3px;
-    color: #B93848; }
+    color: #ffffff; }
     div.stats #player2 .capturedPiece {
       width: 2.4vmin;
       height: 2.4vmin;
-      background-color: #B93848;
+      background-color: #ffffff;
       background-size: 65%;
       background-repeat: no-repeat;
       background-position: center;
@@ -184,3 +184,37 @@ div#board {
       box-shadow: 0 0 10px 5px #16A8C7; }
 
 /*# sourceMappingURL=style.css.map */
+
+/*
+ * Adição de CSS
+ */
+ .regua_horizontal{
+  display: flex;
+  flex-direction: row;
+  top: calc(131% - 40vmin);
+  left: calc(50% - 40vmin);
+  width: 80vmin;
+ }
+ .regua_vertical{
+  display: flex;
+  flex-direction: column;
+  top: calc(50% - 40vmin);
+  left: calc(45% - 40vmin);
+  
+ }
+ .regua_horizontal, .regua_vertical{
+  position: absolute;  
+  border-radius: 5px;
+  box-shadow: 1px 1px 3px #232621;
+  background-color: #E2F0EF;
+ }
+ .regua_vertical div{
+  height: 10vmin;
+  width: 3vmin;
+  text-align: center;
+
+ }
+ .regua_horizontal div{
+  width: 10vmin;
+  text-align: center;
+ }
