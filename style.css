@@ -199,22 +199,29 @@ div#board {
   display: flex;
   flex-direction: column;
   top: calc(50% - 40vmin);
-  left: calc(45% - 40vmin);
+  left: calc(46% - 40vmin);
   
  }
  .regua_horizontal, .regua_vertical{
   position: absolute;  
   border-radius: 5px;
   box-shadow: 1px 1px 3px #232621;
-  background-color: #E2F0EF;
+  background-color: #408080;
+  
  }
  .regua_vertical div{
+  color: #E2F0EF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 10vmin;
-  width: 3vmin;
+  width: 25px;
   text-align: center;
 
  }
  .regua_horizontal div{
+  color: #E2F0EF;
   width: 10vmin;
   text-align: center;
+  height: 25px;
  }
