@@ -21,4 +21,6 @@ if(navigator.userAgentData.mobile){
     window.addEventListener('resize', function(){
         redimensionarRegua()
     })
+    /* Redimensiona ao iniciar */
+    redimensionarRegua()
 }
