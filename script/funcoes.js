@@ -17,10 +17,12 @@ function redimensionarRegua(){
     $(".regua_horizontal").css("top", (position.top + (position.height) + 5))
     
 }
-if(navigator.userAgentData.mobile){
-    window.addEventListener('resize', function(){
+window.onload(function(){
+    if(navigator.userAgentData.mobile){
+        window.addEventListener('resize', function(){
+            redimensionarRegua()
+        })
+        /* Redimensiona ao iniciar */
         redimensionarRegua()
-    })
-    /* Redimensiona ao iniciar */
-    redimensionarRegua()
-}
+    }
+})
