@@ -225,3 +225,12 @@ div#board {
   text-align: center;
   height: 25px;
  }
+ @media (max-width:500px) {
+  .regua_vertical{
+    left: calc(43% - 40vmin)
+  }
+  .regua_horizontal{
+    bottom: calc(50% -10min);
+  }
+
+ }

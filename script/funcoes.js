@@ -10,3 +10,15 @@ function mensagem(txtMsg){
         window.alert(txtMsg)
     };
 }
+
+function redimensionarRegua(){
+    var position = $('#board').get(0).getBoundingClientRect()
+    $(".regua_vertical").css("left", (position.left - 35))
+    $(".regua_horizontal").css("top", (position.top + (position.height) + 5))
+    
+}
+if(navigator.userAgentData.mobile){
+    window.addEventListener('resize', function(){
+        redimensionarRegua()
+    })
+}
