@@ -30,7 +30,7 @@ window.onload = function () {
     //which player's piece i it
     this.player = '';
     //figure out player by piece id
-    if (this.element.attr("id") < 12)
+    if (this.element.attr("id") >= 12)
       this.player = 1;
     else
       this.player = 2;
@@ -163,8 +163,8 @@ window.onload = function () {
         if (k.position[0] == this.position[0] && k.position[1] == this.position[1]) return 'wrong'; // impede que uma a peça vá para um slot com outra peça
 
         // Checa se é pra captura de peça
-        if (!piece.king && piece.player == 1 && this.position[0] < piece.position[0] && !isCapture) return 'wrong'; // checa se ele ta voltando a jogada com as pretas
-        if (!piece.king && piece.player == 2 && this.position[0] > piece.position[0] && !isCapture) return 'wrong'; // checa se ele ta voltando a jogada com as brancas
+        if (!piece.king && piece.player == 1 && this.position[0] > piece.position[0] && !isCapture) return 'wrong'; // checa se ele ta voltando a jogada com as pretas
+        if (!piece.king && piece.player == 2 && this.position[0] < piece.position[0] && !isCapture) return 'wrong'; // checa se ele ta voltando a jogada com as brancas
         if (dist(this.position[0], this.position[1], piece.position[0], piece.position[1]) == Math.sqrt(2)) {
           //regular move
           return 'regular';
@@ -227,7 +227,7 @@ window.onload = function () {
     },
     //check if the location has an object
     isValidPlacetoMove: function (row, column) {
-      // console.log(row); console.log(column); console.log(this.board);
+      console.log(row); console.log(column); console.log(this.board);
       if (row < 0 || row > 7 || column < 0 || column > 7) return false;
       if (this.board[row][column] == 0) {
         return true;
