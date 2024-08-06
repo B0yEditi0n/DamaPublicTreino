@@ -64,11 +64,23 @@ window.onload = function () {
     };
 
     //tests if piece can jump anywhere
-    this.canJumpAny = function () {
-      return (this.canOpponentJump([this.position[0] + 2, this.position[1] + 2]) ||
+    this.canJumpAny = function (isKing = false) {
+      if(!isKing){
+        return (this.canOpponentJump([this.position[0] + 2, this.position[1] + 2]) ||
         this.canOpponentJump([this.position[0] + 2, this.position[1] - 2]) ||
         this.canOpponentJump([this.position[0] - 2, this.position[1] + 2]) ||
         this.canOpponentJump([this.position[0] - 2, this.position[1] - 2]))
+      }else{
+        for(var x = 2; (this.position[1] + x) <= 7; x++){
+          for(var y = 2;(this.position[0] + y) <= 7; y++){
+              if(this.canOpponentJump([this.position[0] + y, this.position[1] + x])){
+                // é valido
+                this.canOpponentJump([this.position[0] + y, this.position[1] + x])
+              }
+          }
+        }        
+      }
+      
     };
 
     //tests if an opponent jump can be made to a specific place
@@ -166,7 +178,7 @@ window.onload = function () {
         var cDx = Math.sign(dx)
         var cDy = Math.sign(dy)
         for(let p of pieces ){
-          if (p.position[0] == piece.position[0] - cDx && p.position[1] == piece.position[1] - cDy && p.player != piece.player) isCapture = true;
+          if (p.position[0] == this.position[0] - cDx && p.position[1] == this.position[1] - cDy && p.player != piece.player) isCapture = true;
         }
         
       }
@@ -369,6 +381,18 @@ window.onload = function () {
           if (piece.opponentJump(tile)) {
             piece.move(tile);
             if (piece.canJumpAny()) {
+              // Board.changePlayerTurn(); //change back to original since another turn can be made
+              piece.element.addClass('selected');
+              // exist continuous jump, you are not allowed to de-select this piece or select other pieces
+              Board.continuousjump = true;
+            } else {
+              Board.changePlayerTurn()
+            }
+          }
+          if(piece.king && inRange == 'jump'){
+            // Teste de implentação de movimentação da DAMA
+            piece.move(tile); // Move a peça
+            if (piece.canJumpAny(true)) { // Checa se tem mais alguma peça que pode ser comida
               // Board.changePlayerTurn(); //change back to original since another turn can be made
               piece.element.addClass('selected');
               // exist continuous jump, you are not allowed to de-select this piece or select other pieces
