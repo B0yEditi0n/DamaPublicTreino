@@ -148,14 +148,27 @@ window.onload = function () {
       // Checa se no intervalo ah uma peça de caputra
       var isCapture = false
       // Posição final - inicial
-      var dy = piece.position[1] - (this.position[1])
-      var dx = piece.position[0] - (this.position[0])      
-      if(Math.abs(dx) == 2 && Math.abs(dy) == 2){
-        var cDx = dx / 2
-        var cDy = dy / 2
+      if(!piece.king){
+        // Essa formula só se aplica a peças não dama
+        var dy = piece.position[1] - (this.position[1])
+        var dx = piece.position[0] - (this.position[0])      
+        if(Math.abs(dx) == 2 && Math.abs(dy) == 2){
+          var cDx = dx / 2
+          var cDy = dy / 2
+          for(let p of pieces ){
+            if (p.position[0] == piece.position[0] - cDx && p.position[1] == piece.position[1] - cDy && p.player != piece.player) isCapture = true;
+          }
+        }
+      }else{//Math.sign(4);
+        var dy = (this.position[1]) - piece.position[1]
+        var dx = (this.position[0]) - piece.position[0]
+        
+        var cDx = Math.sign(dx)
+        var cDy = Math.sign(dy)
         for(let p of pieces ){
           if (p.position[0] == piece.position[0] - cDx && p.position[1] == piece.position[1] - cDy && p.player != piece.player) isCapture = true;
         }
+        
       }
 
       for (let k of pieces){
@@ -170,6 +183,12 @@ window.onload = function () {
           return 'regular';
         } else if (dist(this.position[0], this.position[1], piece.position[0], piece.position[1]) == 2 * Math.sqrt(2)) {
           //jump move
+          return 'jump';
+        }
+        // Dama
+        if(!isCapture && piece.king){
+          return 'regular';
+        }else if(isCapture && piece.king){
           return 'jump';
         }
       }
