@@ -2,16 +2,20 @@
 <html>
 <head>
   <title>CDD (Circuito Didático de Damas)</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="./script/jquery.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
-  <link href="style.css" rel="stylesheet">
+  <link href="./css/style.css" rel="stylesheet">
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <link rel="icon" href="favicon.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <!-- <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" href="favicon.png" type="image/x-icon"> -->
   
 </head>
 <body>
-  <div class="column">
+  <!-- <div class="column">
     <div class="info">
       <h1>Checkers</h1>
       <hr>
@@ -32,8 +36,55 @@
       <span id="winner"></span>
       <button id="cleargame">Reset Game</button>
     </div>
+  </div> -->
+  <div class="lateralBar">
+    <div class="d-flex flex-column flex-shrink-0 bg-light" style="width: 4.5rem;">
+      <a href="/" class="d-block p-3 link-dark text-decoration-none" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Icon-only">
+        <svg class="bi" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+        <span class="visually-hidden">Icon-only</span>
+      </a>
+      <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+        <li class="nav-item">
+          <a href="#" class="nav-link active py-3 border-bottom" aria-current="page" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
+            <svg class="bi" width="24" height="24" role="img" aria-label="Home"><use xlink:href="#home"></use></svg>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link py-3 border-bottom" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
+            <svg class="bi" width="24" height="24" role="img" aria-label="Dashboard"><use xlink:href="#speedometer2"></use></svg>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link py-3 border-bottom" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Orders">
+            <svg class="bi" width="24" height="24" role="img" aria-label="Orders"><use xlink:href="#table"></use></svg>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link py-3 border-bottom" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Products">
+            <svg class="bi" width="24" height="24" role="img" aria-label="Products"><use xlink:href="#grid"></use></svg>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link py-3 border-bottom" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Customers">
+            <svg class="bi" width="24" height="24" role="img" aria-label="Customers"><use xlink:href="#people-circle"></use></svg>
+          </a>
+        </li>
+      </ul>
+      <div class="dropdown border-top">
+        <a href="#" class="d-flex align-items-center justify-content-center p-3 link-dark text-decoration-none dropdown-toggle" id="dropdownUser3" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="https://github.com/mdo.png" alt="mdo" width="24" height="24" class="rounded-circle">
+        </a>
+        <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser3">
+          <li><a class="dropdown-item" href="#">New project...</a></li>
+          <li><a class="dropdown-item" href="#">Settings</a></li>
+          <li><a class="dropdown-item" href="#">Profile</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="#">Sign out</a></li>
+        </ul>
+      </div>
+    </div>
   </div>
-  <div class="column">
+  <div class="gridBorad column">
     <div class="Regua">
       <div id="board">
         <div class="tiles"></div>
