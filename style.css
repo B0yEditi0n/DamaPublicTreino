@@ -191,7 +191,8 @@ div#board {
  .regua_horizontal{
   display: flex;
   flex-direction: row;
-  top: calc(131% - 40vmin);
+  /* top: calc(131% - 40vmin); */
+  top: calc(50% + 41vmin);
   left: calc(50% - 40vmin);
   width: 80vmin;
  }
@@ -199,7 +200,7 @@ div#board {
   display: flex;
   flex-direction: column;
   top: calc(50% - 40vmin);
-  left: calc(46% - 40vmin);
+  left: calc(50% - (40vmin + 35px));
   
  }
  .regua_horizontal, .regua_vertical{
@@ -224,13 +225,4 @@ div#board {
   width: 10vmin;
   text-align: center;
   height: 25px;
- }
- @media (max-width:500px) {
-  .regua_vertical{
-    left: calc(43% - 40vmin)
-  }
-  .regua_horizontal{
-    bottom: calc(50% -10min);
-  }
-
  }
