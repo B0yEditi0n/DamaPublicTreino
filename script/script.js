@@ -176,7 +176,7 @@ function Tile(element, position) {
       
       if (k.position[0] == this.position[0] && k.position[1] == this.position[1]) return 'wrong'; // impede que uma a peça vá para um slot com outra peça
 
-      // Checa se é pra captura de peça
+      voltarJogada// Checa se é pra captura de peça
       if (!piece.king && piece.player == 1 && this.position[0] > piece.position[0] && !isCapture) return 'wrong'; // checa se ele ta voltando a jogada com as pretas
       if (!piece.king && piece.player == 2 && this.position[0] < piece.position[0] && !isCapture) return 'wrong'; // checa se ele ta voltando a jogada com as brancas
       if (dist(this.position[0], this.position[1], piece.position[0], piece.position[1]) == Math.sqrt(2)) {
@@ -234,7 +234,7 @@ var Board = {
       }
     }
   },
-  reinitalize: function(boardStart){
+  reinitalize: function(startSet){
     var countPiecesW = 11;
     var countPiecesB = 0;
     var countTiles = 0;
@@ -252,7 +252,12 @@ var Board = {
           }
         }
 
+        // seta a Vez 
+        Board.playerTurn = startSet["playerTurn"]
+        
         // Restarta as Peças
+        var boardStart = startSet["bord"]
+
         var piece = boardStart[row][column]
         if(piece == 1 || piece == 'W'){
           this.board[row][column] = 1
@@ -363,7 +368,7 @@ var Board = {
   },
   // Salva Estado da borda
   save_state: function(){
-    
+    var save = {}
     var currentBord = [
       [0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0],
@@ -397,8 +402,10 @@ var Board = {
       }
     }
     
-    historicoBord.push(currentBord)
-    console.log(currentBord)
+    save["bord"] = currentBord
+    save["playerTurn"] = this.playerTurn
+
+    historicoBord.push(save)
 
   }
 }
