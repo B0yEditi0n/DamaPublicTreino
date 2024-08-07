@@ -234,6 +234,47 @@ var Board = {
       }
     }
   },
+  reinitalize: function(boardStart){
+    var countPiecesW = 11;
+    var countPiecesB = 0;
+    var countTiles = 0;
+    // Inicia com base em um jogo já pré estábelecido
+    for (let row in this.board) { //Linha 
+      for (let column in this.board[row]) { //Coluna
+        // Renderiza o Espaços de Peças
+        if (row % 2 == 1) {
+          if (column % 2 == 0) {
+            countTiles = this.tileRender(row, column, countTiles)
+          }
+        } else {
+          if (column % 2 == 1) {
+            countTiles = this.tileRender(row, column, countTiles)
+          }
+        }
+
+        // Restarta as Peças
+        var piece = boardStart[row][column]
+        if(piece == 1 || piece == 'W'){
+          this.board[row][column] = 1
+          if(piece == 'W'){
+            countPiecesW = this.restartPiecesPlayer(1, row, column, countPiecesW, true)
+          } else{
+            countPiecesW = this.restartPiecesPlayer(1, row, column, countPiecesW, false)
+          }            
+          
+        }
+        if(piece == 2 || piece == 'B'){
+          this.board[row][column] = 2
+          if(piece == 'B'){
+            countPiecesB = this.restartPiecesPlayer(2, row, column, countPiecesB, true)
+          }else{
+            countPiecesB = this.restartPiecesPlayer(2, row, column, countPiecesB, false)
+          }            
+        }
+      }
+    }
+
+  },
   tileRender: function (row, column, countTiles) {
     this.tilesElement.append("<div class='tile' id='tile" + countTiles + "' style='top:" + this.dictionary[row] + ";left:" + this.dictionary[column] + ";'></div>");
     tiles[countTiles] = new Tile($("#tile" + countTiles), [parseInt(row), parseInt(column)]);
@@ -245,6 +286,13 @@ var Board = {
     pieces[countPieces] = new Piece($("#" + countPieces), [parseInt(row), parseInt(column)]);
     return countPieces + 1;
   },
+  
+  restartPiecesPlayer: function (playerNumber, row, column, countPieces, isKing){
+    $(`.player${playerNumber}pieces`).append("<div class='piece' id='" + countPieces + "' style='top:" + this.dictionary[row] + ";left:" + this.dictionary[column] + ";'></div>");
+    pieces[countPieces] = new Piece($("#" + countPieces), [parseInt(row), parseInt(column)]);
+    return countPieces + 1;
+  },
+
   //check if the location has an object
   isValidPlacetoMove: function (row, column) {
     //console.log(row); console.log(column); console.log(this.board);
