@@ -64,20 +64,30 @@ window.onload = function () {
     };
 
     //tests if piece can jump anywhere
-    this.canJumpAny = function (isKing = false) {
-      if(!isKing){
+    this.canJumpAny = function () {
+      if(!this.isKing){
         return (this.canOpponentJump([this.position[0] + 2, this.position[1] + 2]) ||
         this.canOpponentJump([this.position[0] + 2, this.position[1] - 2]) ||
         this.canOpponentJump([this.position[0] - 2, this.position[1] + 2]) ||
         this.canOpponentJump([this.position[0] - 2, this.position[1] - 2]))
       }else{
-        for(var x = 2; (this.position[1] + x) <= 7; x++){
-          for(var y = 2;(this.position[0] + y) <= 7; y++){
-              if(this.canOpponentJump([this.position[0] + y, this.position[1] + x])){
-                // é valido
-                this.canOpponentJump([this.position[0] + y, this.position[1] + x])
-              }
+        for(var i = 0; i<= 7; i++){
+          // Aumenta e diminui isso deve ser uma constante
+          
+          if(this.canOpponentJump([this.position[0] + i, this.position[1] + i])){
+            return this.canOpponentJump([this.position[0] + i, this.position[1] + i])
           }
+          if(this.canOpponentJump([this.position[0] + i, this.position[1] - i])){
+            return this.canOpponentJump([this.position[0] + i, this.position[1] - i])
+          }
+          if(this.canOpponentJump([this.position[0] - i, this.position[1] + i])){
+            return this.canOpponentJump([this.position[0] - i, this.position[1] + i])
+          }
+
+          if(this.canOpponentJump([this.position[0] - i, this.position[1] - i])){
+            return this.canOpponentJump([this.position[0] - i, this.position[1] - i])
+          }
+          
         }        
       }
       
@@ -97,12 +107,12 @@ window.onload = function () {
       // }
 
       // ceca se a peça normal não está dandando mais de 2 casas
-      //if(Math.abs(dx) == 2 && Math.abs(dy) == 2 && this.king == false) return false;
+      if(Math.abs(dx) > 2 && Math.abs(dy) > 2 && this.king == false) return false;
       //must be in bounds
       if (newPosition[0] > 7 || newPosition[1] > 7 || newPosition[0] < 0 || newPosition[1] < 0) return false;
       //middle tile where the piece to be conquered sits
-      var tileToCheckx = this.position[1] + dx / 2; // x da peça a ser capturada
-      var tileToChecky = this.position[0] + dy / 2; // y da peça a ser capturada
+      var tileToCheckx = newPosition[1] - Math.sign(dx) /// 2; // x da peça a ser capturada
+      var tileToChecky = newPosition[0] - Math.sign(dy) // / 2; // y da peça a ser capturada
       if (tileToCheckx > 7 || tileToChecky > 7 || tileToCheckx < 0 || tileToChecky < 0) return false;
       //if there is a piece there and there is no piece in the space after that
       if (!Board.isValidPlacetoMove(tileToChecky, tileToCheckx) && Board.isValidPlacetoMove(newPosition[0], newPosition[1])) {
@@ -159,29 +169,17 @@ window.onload = function () {
     this.inRange = function (piece) {
       // Checa se no intervalo ah uma peça de caputra
       var isCapture = false
-      // Posição final - inicial
-      if(!piece.king){
-        // Essa formula só se aplica a peças não dama
-        var dy = piece.position[1] - (this.position[1])
-        var dx = piece.position[0] - (this.position[0])      
-        if(Math.abs(dx) == 2 && Math.abs(dy) == 2){
-          var cDx = dx / 2
-          var cDy = dy / 2
-          for(let p of pieces ){
-            if (p.position[0] == piece.position[0] - cDx && p.position[1] == piece.position[1] - cDy && p.player != piece.player) isCapture = true;
-          }
-        }
-      }else{//Math.sign(4);
-        var dy = (this.position[1]) - piece.position[1]
-        var dx = (this.position[0]) - piece.position[0]
-        
-        var cDx = Math.sign(dx)
-        var cDy = Math.sign(dy)
-        for(let p of pieces ){
-          if (p.position[0] == this.position[0] - cDx && p.position[1] == this.position[1] - cDy && p.player != piece.player) isCapture = true;
-        }
-        
+      // Posição final - inicial;
+      var dy = (this.position[1]) - piece.position[1]
+      var dx = (this.position[0]) - piece.position[0]
+      
+      var cDx = Math.sign(dx)
+      var cDy = Math.sign(dy)
+      for(let p of pieces ){
+        if (p.position[0] == this.position[0] - cDx && p.position[1] == this.position[1] - cDy && p.player != piece.player) isCapture = true;
       }
+        
+    
 
       for (let k of pieces){
         
@@ -381,18 +379,6 @@ window.onload = function () {
           if (piece.opponentJump(tile)) {
             piece.move(tile);
             if (piece.canJumpAny()) {
-              // Board.changePlayerTurn(); //change back to original since another turn can be made
-              piece.element.addClass('selected');
-              // exist continuous jump, you are not allowed to de-select this piece or select other pieces
-              Board.continuousjump = true;
-            } else {
-              Board.changePlayerTurn()
-            }
-          }
-          if(piece.king && inRange == 'jump'){
-            // Teste de implentação de movimentação da DAMA
-            piece.move(tile); // Move a peça
-            if (piece.canJumpAny(true)) { // Checa se tem mais alguma peça que pode ser comida
               // Board.changePlayerTurn(); //change back to original since another turn can be made
               piece.element.addClass('selected');
               // exist continuous jump, you are not allowed to de-select this piece or select other pieces
