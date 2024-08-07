@@ -1,4 +1,17 @@
+// Histórico de Versões
+var historicoBord = [
+  [[0, 2, 0, 2, 0, 2, 0, 2],
+  [2, 0, 2, 0, 2, 0, 2, 0],
+  [0, 2, 0, 2, 0, 2, 0, 2],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [1, 0, 1, 0, 1, 0, 1, 0],
+  [0, 1, 0, 1, 0, 1, 0, 1],
+  [1, 0, 1, 0, 1, 0, 1, 0]]
+]
+
 window.onload = function () {
+
   // Setup inicial de start das damas.
   var gameBoard = [
     [0, 2, 0, 2, 0, 2, 0, 2],
@@ -44,16 +57,12 @@ window.onload = function () {
     this.move = function (tile) {
       this.element.removeClass('selected');
       if (!Board.isValidPlacetoMove(tile.position[0], tile.position[1])) return false;
-      //certifique-se de que a peça não retroceda se não for uma dama
-      // if (this.player == 1 && this.king == false) {
-      //   if (tile.position[0] < this.position[0]) return false;
-      // } else if (this.player == 2 && this.king == false) {
-      //   if (tile.position[0] > this.position[0]) return false;
-      // }
       //remova a marca do Board.board e coloque-a no novo local
       Board.board[this.position[0]][this.position[1]] = 0;
       Board.board[tile.position[0]][tile.position[1]] = this.player;
       this.position = [tile.position[0], tile.position[1]];
+      // Guarda histórico 
+      historicoBord.push(Board.board)
       //change the css using board's dictionary
       this.element.css('top', Board.dictionary[this.position[0]]);
       this.element.css('left', Board.dictionary[this.position[1]]);
@@ -171,8 +180,6 @@ window.onload = function () {
       for(let p of pieces ){
         if (p.position[0] == this.position[0] - cDx && p.position[1] == this.position[1] - cDy && p.player != piece.player) isCapture = true;
       }
-        
-    
 
       for (let k of pieces){
         
@@ -249,7 +256,7 @@ window.onload = function () {
     },
     //check if the location has an object
     isValidPlacetoMove: function (row, column) {
-      console.log(row); console.log(column); console.log(this.board);
+      //console.log(row); console.log(column); console.log(this.board);
       if (row < 0 || row > 7 || column < 0 || column > 7) return false;
       if (this.board[row][column] == 0) {
         return true;
@@ -314,6 +321,10 @@ window.onload = function () {
         }
       }
       return ret
+    },
+    // Salva Estado da borda
+    save_state: function(){
+
     }
   }
 
