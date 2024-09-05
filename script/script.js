@@ -65,32 +65,32 @@ function Piece(element, position) {
 
   //tests if piece can jump anywhere
   this.canJumpAny = function () {
-    if(!this.king){
+    if (!this.king) {
       return (this.canOpponentJump([this.position[0] + 2, this.position[1] + 2]) ||
-      this.canOpponentJump([this.position[0] + 2, this.position[1] - 2]) ||
-      this.canOpponentJump([this.position[0] - 2, this.position[1] + 2]) ||
-      this.canOpponentJump([this.position[0] - 2, this.position[1] - 2]))
-    }else{
-      for(var i = 0; i<= 7; i++){
+        this.canOpponentJump([this.position[0] + 2, this.position[1] - 2]) ||
+        this.canOpponentJump([this.position[0] - 2, this.position[1] + 2]) ||
+        this.canOpponentJump([this.position[0] - 2, this.position[1] - 2]))
+    } else {
+      for (var i = 0; i <= 7; i++) {
         // Aumenta e diminui isso deve ser uma constante
-        
-        if(this.canOpponentJump([this.position[0] + i, this.position[1] + i])){
+
+        if (this.canOpponentJump([this.position[0] + i, this.position[1] + i])) {
           return this.canOpponentJump([this.position[0] + i, this.position[1] + i])
         }
-        if(this.canOpponentJump([this.position[0] + i, this.position[1] - i])){
+        if (this.canOpponentJump([this.position[0] + i, this.position[1] - i])) {
           return this.canOpponentJump([this.position[0] + i, this.position[1] - i])
         }
-        if(this.canOpponentJump([this.position[0] - i, this.position[1] + i])){
+        if (this.canOpponentJump([this.position[0] - i, this.position[1] + i])) {
           return this.canOpponentJump([this.position[0] - i, this.position[1] + i])
         }
 
-        if(this.canOpponentJump([this.position[0] - i, this.position[1] - i])){
+        if (this.canOpponentJump([this.position[0] - i, this.position[1] - i])) {
           return this.canOpponentJump([this.position[0] - i, this.position[1] - i])
         }
-        
-      }        
+
+      }
     }
-    
+
   };
 
   //tests if an opponent jump can be made to a specific place
@@ -98,9 +98,9 @@ function Piece(element, position) {
     //find what the displacement is
     var dx = newPosition[1] - this.position[1];
     var dy = newPosition[0] - this.position[0];
-    
+
     // ceca se a peça normal não está dandando mais de 2 casas
-    if(Math.abs(dx) > 2 && Math.abs(dy) > 2 && !this.king) return false;
+    if (Math.abs(dx) > 2 && Math.abs(dy) > 2 && !this.king) return false;
     //must be in bounds
     if (newPosition[0] > 7 || newPosition[1] > 7 || newPosition[0] < 0 || newPosition[1] < 0) return false;
     //middle tile where the piece to be conquered sits
@@ -165,15 +165,19 @@ function Tile(element, position) {
     // Posição final - inicial;
     var dy = (this.position[1]) - piece.position[1]
     var dx = (this.position[0]) - piece.position[0]
-    
+
     var cDx = Math.sign(dx)
     var cDy = Math.sign(dy)
-    for(let p of pieces ){
-      if (p.position[0] == this.position[0] - cDx && p.position[1] == this.position[1] - cDy && p.player != piece.player) isCapture = true;
+    for (let p of pieces) {
+      try {
+        if (p.position[0] == this.position[0] - cDx && p.position[1] == this.position[1] - cDy && p.player != piece.player){ isCapture = true; }
+      } catch (error) {
+        debugger;
+      }
     }
 
-    for (let k of pieces){
-      
+    for (let k of pieces) {
+
       if (k.position[0] == this.position[0] && k.position[1] == this.position[1]) return 'wrong'; // impede que uma a peça vá para um slot com outra peça
 
       voltarJogada// Checa se é pra captura de peça
@@ -187,13 +191,13 @@ function Tile(element, position) {
         return 'jump';
       }
       // Dama
-      if(!isCapture && piece.king){
+      if (!isCapture && piece.king) {
         return 'regular';
-      }else if(isCapture && piece.king){
+      } else if (isCapture && piece.king) {
         return 'jump';
       }
     }
-    
+
   };
 }
 
@@ -234,9 +238,9 @@ var Board = {
       }
     }
   },
-  reinitalize: function(startSet){
-    var countPiecesW = 11;
+  reinitalize: function (startSet) {
     var countPiecesB = 0;
+    var countPiecesW = 0;
     var countTiles = 0;
     // Inicia com base em um jogo já pré estábelecido
     for (let row in this.board) { //Linha 
@@ -254,31 +258,34 @@ var Board = {
 
         // seta a Vez 
         Board.playerTurn = startSet["playerTurn"]
-        
+
         // Restarta as Peças
         var boardStart = startSet["bord"]
-
         var piece = boardStart[row][column]
-        if(piece == 1 || piece == 'W'){
-          this.board[row][column] = 1
-          if(piece == 'W'){
-            countPiecesW = this.restartPiecesPlayer(1, row, column, countPiecesW, true)
-          } else{
-            countPiecesW = this.restartPiecesPlayer(1, row, column, countPiecesW, false)
-          }            
-          
-        }
-        if(piece == 2 || piece == 'B'){
+
+        if (piece == 2 || piece == 'B') {
           this.board[row][column] = 2
-          if(piece == 'B'){
+          if (piece == 'B') {
             countPiecesB = this.restartPiecesPlayer(2, row, column, countPiecesB, true)
-          }else{
+          } else {
             countPiecesB = this.restartPiecesPlayer(2, row, column, countPiecesB, false)
-          }            
+          }
+        }
+
+        countPiecesW += countPiecesB;
+        if (piece == 1 || piece == 'W') {
+          this.board[row][column] = 1
+          if (piece == 'W') {
+            countPiecesW = this.restartPiecesPlayer(1, row, column, countPiecesW, true)
+          } else {
+            countPiecesW = this.restartPiecesPlayer(1, row, column, countPiecesW, false)
+          }
+
         }
       }
     }
 
+    this.setEvents()
   },
   tileRender: function (row, column, countTiles) {
     this.tilesElement.append("<div class='tile' id='tile" + countTiles + "' style='top:" + this.dictionary[row] + ";left:" + this.dictionary[column] + ";'></div>");
@@ -291,8 +298,8 @@ var Board = {
     pieces[countPieces] = new Piece($("#" + countPieces), [parseInt(row), parseInt(column)]);
     return countPieces + 1;
   },
-  
-  restartPiecesPlayer: function (playerNumber, row, column, countPieces, isKing){
+
+  restartPiecesPlayer: function (playerNumber, row, column, countPieces, isKing) {
     $(`.player${playerNumber}pieces`).append("<div class='piece' id='" + countPieces + "' style='top:" + this.dictionary[row] + ";left:" + this.dictionary[column] + ";'></div>");
     pieces[countPieces] = new Piece($("#" + countPieces), [parseInt(row), parseInt(column)]);
     return countPieces + 1;
@@ -367,7 +374,7 @@ var Board = {
     return ret
   },
   // Salva Estado da borda
-  save_state: function(){
+  save_state: function () {
     var save = {}
     var currentBord = [
       [0, 0, 0, 0, 0, 0, 0, 0],
@@ -379,106 +386,106 @@ var Board = {
       [0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0]
     ]
-    for(var i = 0; i < pieces.length; i++){
+    for (var i = 0; i < pieces.length; i++) {
       p = pieces[i]
       // Checa qual a cor da peça e se ela está no tabuleiro
-      if(p.player == 1 && p.position.length == 2){
-        
+      if (p.player == 1 && p.position.length == 2) {
+
         // checa se é Branca Dama (White Lady)
-        if(p.king){
+        if (p.king) {
           currentBord[p.position[0]][p.position[1]] = 'W'
-        }else{
+        } else {
           currentBord[p.position[0]][p.position[1]] = '1'
         }
 
       }
-      if(p.player == 2 && p.position.length == 2){
+      if (p.player == 2 && p.position.length == 2) {
         // Checa se é Rei Preto (King Black)
-        if(p.king){
+        if (p.king) {
           currentBord[p.position[0]][p.position[1]] = 'B'
-        }else{
+        } else {
           currentBord[p.position[0]][p.position[1]] = '2'
         }
       }
     }
-    
+
     save["bord"] = currentBord
     save["playerTurn"] = this.playerTurn
 
     historicoBord.push(save)
 
-  }
-}
+  },
+  setEvents: function () {
+    /*************
+    *   Events
+    *************/
+    //select the piece on click if it is the player's turn
+    $('.piece').on("click", function () {
+      var selected;
+      var isPlayersTurn = ($(this).parent().attr("class").split(' ')[0] == "player" + Board.playerTurn + "pieces");
+      if (isPlayersTurn) {
+        if (!Board.continuousjump && pieces[$(this).attr("id")].allowedtomove) {
+          if ($(this).hasClass('selected')){ selected = true };
+          $('.piece').each(function (index) {
+            $('.piece').eq(index).removeClass('selected')
+          });
+          if (!selected) {
+            $(this).addClass('selected');
+          }
+        } else {
+          let exist = "Essa peça não tem permissão para se mover"
+          let continuous = "você tem que pular a mesma peça"
+          let message = !Board.continuousjump ? exist : continuous
+          mensagem(message)
+        }
+      } else {
+        mensagem('Não é a vez dessas pessas.')
 
-/***
-Events
-***/
-
-//select the piece on click if it is the player's turn
-$('.piece').on("click", function () {
-  var selected;
-  var isPlayersTurn = ($(this).parent().attr("class").split(' ')[0] == "player" + Board.playerTurn + "pieces");
-  if (isPlayersTurn) {
-    if (!Board.continuousjump && pieces[$(this).attr("id")].allowedtomove) {
-      if ($(this).hasClass('selected')) selected = true;
-      $('.piece').each(function (index) {
-        $('.piece').eq(index).removeClass('selected')
-      });
-      if (!selected) {
-        $(this).addClass('selected');
       }
-    } else {
-      let exist = "Essa peça não tem permissão para se mover"
-      let continuous = "você tem que pular a mesma peça"
-      let message = !Board.continuousjump ? exist : continuous
-      mensagem(message)
-    }
-  }else{
-    mensagem('Não é a vez dessas pessas.')
-    
-  }
-  
-});
 
-//reset game when clear button is pressed
-$('#cleargame').on("click", function () {
-  Board.clear();
-});
+    });
 
-//mover peça quando o espaço é clicado
-$('.tile').on("click", function () {
-  //make sure a piece is selected
-  if ($('.selected').length != 0) {
-    //find the tile object being clicked
-    var tileID = $(this).attr("id").replace(/tile/, '');
-    var tile = tiles[tileID];
-    //find the piece being selected
-    var piece = pieces[$('.selected').attr("id")];
-    //check if the tile is in range from the object
-    var inRange = tile.inRange(piece);
-    if (inRange != 'wrong') {
-      //if the move needed is jump, then move it but also check if another move can be made (double and triple jumps)
-      if (inRange == 'jump') {
-        if (piece.opponentJump(tile)) {
-          piece.move(tile);
-          if (piece.canJumpAny()) {
-            // Board.changePlayerTurn(); //change back to original since another turn can be made
-            piece.element.addClass('selected');
-            // exist continuous jump, you are not allowed to de-select this piece or select other pieces
-            Board.continuousjump = true;
-          } else {
-            Board.changePlayerTurn()
+    //reset game when clear button is pressed
+    $('#cleargame').on("click", function () {
+      Board.clear();
+    });
+
+    //mover peça quando o espaço é clicado
+    $('.tile').on("click", function () {
+      //make sure a piece is selected
+      if ($('.selected').length != 0) {
+        //find the tile object being clicked
+        var tileID = $(this).attr("id").replace(/tile/, '');
+        var tile = tiles[tileID];
+        //find the piece being selected
+        var piece = pieces[$('.selected').attr("id")];
+        //check if the tile is in range from the object
+        var inRange = tile.inRange(piece);
+        if (inRange != 'wrong') {
+          //if the move needed is jump, then move it but also check if another move can be made (double and triple jumps)
+          if (inRange == 'jump') {
+            if (piece.opponentJump(tile)) {
+              piece.move(tile);
+              if (piece.canJumpAny()) {
+                // Board.changePlayerTurn(); //change back to original since another turn can be made
+                piece.element.addClass('selected');
+                // exist continuous jump, you are not allowed to de-select this piece or select other pieces
+                Board.continuousjump = true;
+              } else {
+                Board.changePlayerTurn()
+              }
+            }
+            //if it's regular then move it if no jumping is available
+          } else if (inRange == 'regular' && !Board.jumpexist) {
+            if (!piece.canJumpAny()) {
+              piece.move(tile);
+              Board.changePlayerTurn()
+            } else {
+              alert("You must jump when possible!");
+            }
           }
         }
-        //if it's regular then move it if no jumping is available
-      } else if (inRange == 'regular' && !Board.jumpexist) {
-        if (!piece.canJumpAny()) {
-          piece.move(tile);
-          Board.changePlayerTurn()
-        } else {
-          alert("You must jump when possible!");
-        }
       }
-    }
+    })
   }
-});
+}
