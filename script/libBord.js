@@ -33,6 +33,37 @@ class Peca{
                 this.king = true;
                 break
         }
+
+        var obj = this;
+        new function(){
+            
+            $(obj.pecaHTML).on('click', function(){
+                //console.log(obj)    
+
+                // Cria um enveto unico para o click
+                /*var selected;
+                var isPlayersTurn = ($(this).parent().attr("class").split(' ')[0] == "player" + Board.playerTurn + "pieces");
+                if (isPlayersTurn) {
+                    if (!Board.continuousjump && pieces[$(this).attr("id")].allowedtomove) {
+                    if ($(this).hasClass('selected')){ selected = true };
+                    $('.piece').each(function (index) {
+                        $('.piece').eq(index).removeClass('selected')
+                    });
+                    if (!selected) {
+                        $(this).addClass('selected');
+                    }
+                    } else {
+                    let exist = "Essa peça não tem permissão para se mover"
+                    let continuous = "você tem que pular a mesma peça"
+                    let message = !Board.continuousjump ? exist : continuous
+                    mensagem(message)
+                    }
+                } else {
+                    mensagem('Não é a vez dessas pessas.')
+
+                }*/
+            })
+        }
     }
 
     returnElementHTML(){
@@ -105,24 +136,15 @@ class Tabuleiro{
 
     initTabuleiro(bordLoad){
         // Checa Layout Padrão
-        if(bordLoad){
-            bordLoad = gameBoard
+        if(!bordLoad){
+            bordLoad["bord"] = gameBoard
         }
 
 
         var index = 0;
-        var styleTop = 0;
         var idxPeca = 0
 
         for(let y=0; y<8; y++){
-            // Valores iniciais da posição            
-            var styleLeft = 0;
-            if(y%2 == 0){
-                styleLeft = 1;
-            }else{
-                styleLeft = 0;
-            }
-
             // Inicia o espaço vazio de y
             this.tabuleiro.push( [] );
             for(let x=0; x < 8; x++){
@@ -131,7 +153,7 @@ class Tabuleiro{
                 this.tabuleiro[y].push( 0 );
                 if((!(y % 2) == 0 && x % 2 == 0) || (y % 2 == 0 && !(x % 2 == 0))){
                     
-                    var peca = bordLoad[y][x];
+                    var peca = bordLoad["bord"][y][x];
 
                     // Cria um Epaço no Tabuleiro
                     this.tabuleiro[y][x] = new Espaco(index)
