@@ -138,8 +138,10 @@ div#board {
     width: 10vmin;
     height: 10vmin;
     position: absolute;
-    background-color: #408080; }
-  div#board .player1pieces .piece {
+    background-color: #408080; 
+  }
+
+  div#board .pecaBranca {
     position: absolute;
     width: 8vmin;
     height: 8vmin;
@@ -159,29 +161,29 @@ div#board {
     background-image: url("../img/ws.png");
 
   }
-    div#board .player1pieces .piece.selected {
-      box-shadow: 0 0 10px 5px #16A8C7; }
-  div#board .player2pieces .piece {
-    position: absolute;
-    width: 8vmin;
-    height: 8vmin;
-    /* background-color: #F1F1FF; */
-    /* background-size: 65%; */
-    background-repeat: no-repeat;
-    background-position: center;
-    border-radius: 6vmin;
-    display: inline-block;
-    box-sizing: border-box;
-    transition: all 0.2s linear;
-    margin-top: 1vmin;
-    margin-left: 1vmin;
-    cursor: pointer;
-    /* border: 1vmin solid #8b8bff;  */
-    /*Edição Damas Brasileiras*/
-    background-image: url("../img/bs.png");
+    div#board .piece.selected { box-shadow: 0 0 10px 5px #16A8C7; }
+
+    div#board .pecaPreta{
+      position: absolute;
+      width: 8vmin;
+      height: 8vmin;
+      /* background-color: #F1F1FF; */
+      /* background-size: 65%; */
+      background-repeat: no-repeat;
+      background-position: center;
+      border-radius: 6vmin;
+      display: inline-block;
+      box-sizing: border-box;
+      transition: all 0.2s linear;
+      margin-top: 1vmin;
+      margin-left: 1vmin;
+      cursor: pointer;
+      /* border: 1vmin solid #8b8bff;  */
+      /*Edição Damas Brasileiras*/
+      background-image: url("../img/bs.png");
   }
-    div#board .player2pieces .piece.selected {
-      box-shadow: 0 0 10px 5px #16A8C7; }
+    /* div#board .player2pieces .piece.selected {
+      box-shadow: 0 0 10px 5px #16A8C7; } */
 
 /*# sourceMappingURL=style.css.map */
 

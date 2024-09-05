@@ -1,3 +1,5 @@
+var tab = new Tabuleiro()
+
 
 function mensagem(txtMsg){
     /*
@@ -11,7 +13,7 @@ function mensagem(txtMsg){
     };
 }
 class ControleJogadas {
-    len = historicoBord.length;
+    //len = historicoBord.length;
     indexHistorico = historicoBord.length;
 
     checaIndex(){
@@ -38,14 +40,14 @@ class ControleJogadas {
     }
 }
 
-var controleJogadas = new ControleJogadas()
+//var controleJogadas = new ControleJogadas()
 
 $('#voltarJogada').on("click", function(){
-    controleJogadas.voltarJogada()
+    //controleJogadas.voltarJogada()
 })
 
 $('#avancarJogada').on("click", function(){
-    controleJogadas.AvancarJogada()
+    //controleJogadas.AvancarJogada()
 })
 
 function getQueryVariable(variable) {
@@ -66,9 +68,9 @@ window.onload = function() {
     
     //Inicializa o jogo de dama
     if(JSON.parse(strIni)){
-        Board.reinitalize({ "playerTurn": 1,"bord": JSON.parse(strIni) });
+        tab.initTabuleiro({ "playerTurn": 1,"bord": JSON.parse(strIni) });
     }else{
-        Board.initalize();
+        tab.initTabuleiro();
     }
     
 }
