@@ -47,3 +47,28 @@ $('#voltarJogada').on("click", function(){
 $('#avancarJogada').on("click", function(){
     controleJogadas.AvancarJogada()
 })
+
+function getQueryVariable(variable) {
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i=0;i<vars.length;i++) {
+      var pair = vars[i].split("=");
+      if (pair[0] == variable) {
+        return pair[1];
+      }
+    }
+}
+
+window.onload = function() {
+    console.log('json;');
+    var initGame = getQueryVariable('config')
+    var strIni = decodeURI(initGame)
+    
+    //Inicializa o jogo de dama
+    if(JSON.parse(strIni)){
+        Board.reinitalize({ "playerTurn": 1,"bord": JSON.parse(strIni) });
+    }else{
+        Board.initalize();
+    }
+    
+}

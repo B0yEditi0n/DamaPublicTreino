@@ -410,9 +410,6 @@ var Board = {
   }
 }
 
-//initialize the board
-Board.initalize();
-
 /***
 Events
 ***/
