@@ -161,7 +161,7 @@ div#board {
     background-image: url("../img/ws.png");
 
   }
-    div#board .piece.selected { box-shadow: 0 0 10px 5px #16A8C7; }
+    div#board .selected { box-shadow: 0 0 10px 5px #16A8C7; }
 
     div#board .pecaPreta{
       position: absolute;

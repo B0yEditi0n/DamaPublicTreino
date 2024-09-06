@@ -46,8 +46,8 @@
             var obj = JSON.parse(evento.target.result);
             window.location.href = `damaPlay.html?config=${JSON.stringify(obj)}`;
         };
-        
         reader.readAsText(this.files[0])
+        this.files[0] = "";
     })
 </script>
 </html>

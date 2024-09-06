@@ -8,6 +8,7 @@ gameBoard = [
     [ 0,  1,  0,  1,  0,  1,  0,  1], 
     [ 1,  0,  1,  0,  1,  0,  1,  0]  
 ]
+
 class Peca{
     id = -1;
     x = -1
@@ -17,8 +18,10 @@ class Peca{
 
     pecaHTML = document.createElement('div')
 
-    constructor(id, grupo){
-        this.id       = id
+    constructor(id, grupo, xy){
+        this.id = id
+        this.x  = xy.x
+        this.y  = xy.y  
         switch (grupo) {
             case 1 :
             case "1":
@@ -35,17 +38,15 @@ class Peca{
                 this.king = true;
                 break
         }
-
-        var obj = this;
-        new function(){
-            
-            $(obj.pecaHTML).on('click', function(){
-                
-            })
-        }
     }
 
     returnElementHTML(){
+        /*
+            Retorna um Element HTML da peça
+            Args:
+                - Return: Element 
+        */
+
         this.pecaHTML.id = `peca${this.id}`
 
         if(this.grupo > 0){
@@ -58,10 +59,51 @@ class Peca{
             if(this.king){
                 this.pecaHTML.style.backgroundImage = 'url(img/king2.png)';
             }
-        }        
+        }
+
+        var obj = this;
+        new function(){
+            $(obj.pecaHTML).on('click', function(){
+                var xy = {x: obj.x, y: obj.y}
+                // Checa se é valido para jogada
+                if(tab.pecaValida(xy, obj.grupo)){
+                    // Remove estilo de outros & Adiciona estilo
+                    $('.selected').removeClass('selected')
+                    $(obj.pecaHTML).addClass('selected')
+                };
+            })
+        }
 
         return this.pecaHTML
     }
+
+    rangeDeCapura(){
+        var listRange = []
+
+        if(!this.king){ // Para peças comumns 
+            listRange.push({
+                y: this.y + 2,
+                x: this.x + 2,
+            })
+            listRange.push({
+                y: this.y + 2,
+                x: this.x - 2,
+            })
+            listRange.push({
+                y: this.y - 2,
+                x: this.x + 2,
+            })
+            listRange.push({
+                y: this.y - 2,
+                x: this.x - 2,
+            })
+            return listRange
+        }else{ // para tipo king
+            
+
+        }
+    }
+
 }
 
 class Espaco{
@@ -95,12 +137,16 @@ class Espaco{
 
     addPeca(oPeca){
         // define posilção
-        oPeca.x = this.x
-        oPeca.y = this.y
         this.epacoHTML.appendChild( oPeca )
     }
 
     returnElementHTML(){
+        /*
+            Retorna um Element HTML do espaço
+            Args:
+                - Return: Element 
+        */
+
         /* Cria um Elemento HTML com base no ID */
 
         this.epacoHTML.className = "tile";
@@ -118,9 +164,17 @@ class Tabuleiro{
     jogadorVez = 0;
 
     initTabuleiro(bordLoad){
+        /*
+            Inicializa o tabuleiro e cria 
+            a base HTML para jogadas
+        */
+
+        var bordConfig
         // Checa Layout Padrão
-        if(!bordLoad){
-            bordLoad["bord"] = gameBoard
+        if(bordLoad){
+            bordConfig = bordLoad["bord"] 
+        }else{
+            bordConfig = gameBoard
         }
 
 
@@ -137,7 +191,7 @@ class Tabuleiro{
                 this.tabuleiro[y].push( {espaco: Object, peca: undefined} );
                 if((!(y % 2) == 0 && x % 2 == 0) || (y % 2 == 0 && !(x % 2 == 0))){
                     
-                    var peca = bordLoad["bord"][y][x];
+                    var peca = bordConfig[y][x];
 
                     // Cria um Epaço no Tabuleiro
                     this.tabuleiro[y][x]["espaco"] = new Espaco(index)
@@ -145,7 +199,8 @@ class Tabuleiro{
                     // Anexa uma Peça (se houver)
                     if(peca != 0){
                         // id, grupo, html
-                        var oPeca = new Peca(idxPeca, peca)
+                        var xy = { x: x, y: y }
+                        var oPeca = new Peca(idxPeca, peca, xy)
                         this.tabuleiro[y][x]["peca"] = oPeca
                         this.tabuleiro[y][x]["espaco"].addPeca( oPeca.returnElementHTML() )                        
 
@@ -163,8 +218,110 @@ class Tabuleiro{
         }
     }
 
+    capturaValida(origem, destino){
+        /*
+            Checa se a captura efetuada é valida
+
+            Args:
+            - Return: Bool | Verdadeiro caso seja
+
+        */
+
+        // entre essas duas posiçoes há uma peca?
+        var xCaptura = destino.x - Math.sign(destino.x - origem.x)
+        var yCaptura = destino.y - Math.sign(destino.y - origem.y )
+
+        // Está dentro dos limites do tabuleiro?
+        if(xCaptura <= 7 && xCaptura >= 0
+        && yCaptura <= 7 && yCaptura >= 0){
+
+            if(this.tabuleiro[yCaptura][xCaptura]["peca"] != undefined){
+                let currentP = this.tabuleiro[yCaptura][xCaptura]["peca"]
+                // há uma peça
+                if(currentP.grupo != this.jogadorVez){ // é Adversária?
+                    // Alguma Peca bloqueia?
+
+                    // Posterior
+                    var pecaPost = this.tabuleiro[destino.y][destino.x]["peca"]
+                    var pecaAnt = this.tabuleiro[yCaptura - Math.sign(origem.y)][xCaptura - Math.sign(origem.x)]["peca"]
+                    if(pecaPost == undefined){
+                        // Anterior 
+                        if(pecaAnt == undefined
+                        || ( yCaptura - Math.sign(origem.y) == origem.y && xCaptura - Math.sign(origem.x) == origem.x ) ){
+                            return true        
+                        }
+                    }                    
+                }
+            }
+
+        }
+    }
+
+    checaJogCaptura(){
+        /*
+            Checa todas as jogadas possiveis no tabuleiro
+
+            Args:
+            - Returns: Object | Retonas a jogadas validas
+                {
+                    origem: {x y}
+                    destino: {x, y}
+                }
+        */
+
+        var jogadasHabilitadas = []
+        for(let y=0; y<this.tabuleiro.length; y++){
+            for(let x=0; x<this.tabuleiro[y].length; x++){
+                var peca = this.tabuleiro[y][x]["peca"]
+                if(peca && peca.grupo == this.jogadorVez){
+                    var List = peca.rangeDeCapura()                    
+                    for(let dest of List){
+                        var xyOrigem = {x: x, y: y}
+                        if(this.capturaValida(xyOrigem, dest)){
+                            jogadasHabilitadas.push({
+                                "origem": xyOrigem,
+                                "destino": dest
+                            })
+                        }
+                    }
+                }
+            }
+        }
+        return jogadasHabilitadas
+    }
+
+    pecaValida(xy, grupo){
+        /*
+            Valida se peça Atual é valida para ser joagada
+            
+            Args:
+            - Returns: bool | Verdadeiro se valida
+        */
+
+        if(grupo == this.jogadorVez){
+
+            // Checar Se há alguma posição de captura
+            var pecasJogaveis = this.checaJogCaptura()
+
+            // A Pesa selecionada está na lista?
+            var position = pecasJogaveis.filter(function(peca){
+                return(
+                    peca.origem.x == xy.x &&
+                    peca.origem.y == xy.y
+                )
+            })
+            console.log(position.length)
+            if(position.length > 0){
+                return true;
+            }
+            
+        }
+
+        return false;
+    }
+
     mover(origem, destino){
-        // Checar Se há alguma posição de jogada
+        
 
     }
 
