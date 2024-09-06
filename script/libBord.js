@@ -50,12 +50,12 @@ class Peca{
         this.pecaHTML.id = `peca${this.id}`
 
         if(this.grupo > 0){
-            this.pecaHTML.className = 'pecaBranca'
+            this.pecaHTML.className = 'peca pecaBranca'
             if(this.king){
                 this.pecaHTML.style.backgroundImage = 'url(img/king1.png)';
             }
         }else if(this.grupo < 0){
-            this.pecaHTML.className = 'pecaPreta'
+            this.pecaHTML.className = 'peca pecaPreta'
             if(this.king){
                 this.pecaHTML.style.backgroundImage = 'url(img/king2.png)';
             }
@@ -67,18 +67,25 @@ class Peca{
                 var xy = {x: obj.x, y: obj.y}
                 // Checa se é valido para jogada
                 var pseudoJogadas = tab.pecaValida(xy, obj.grupo)
-                if(pseudoJogadas){
+                if(pseudoJogadas){ 
+                    if(pseudoJogadas.length > 0){
+                        // Alguém é obrigaod a comer
+
                     // Remove estilo de outros & Adiciona estilo
                     $('.marcaJogada').removeClass('marcaJogada')
                     $('.selected').removeClass('selected')
                     $(obj.pecaHTML).addClass('selected')
                     
                     // Pinta as Celulas jogaveis
-                    for(let jogada of pseudoJogadas.position){
-                        tab.tabuleiro[jogada.destino.y][jogada.destino.x]["espaco"].marcaComoJogavel()
+                    for(let jogada of pseudoJogadas){
+                        tab.tabuleiro[jogada.y][jogada.x]["espaco"].marcaComoJogavel()
                     }
-                    
-                };
+
+                    // Guarda Peça selecionada
+                    tab.pecaSel = obj;
+                    }
+                }
+                
             })
         }
 
@@ -147,6 +154,9 @@ class Espaco{
         // define posilção
         this.epacoHTML.appendChild( oPeca )
     }
+    delPeca(){
+        $(this.epacoHTML).children('.peca').remove();
+    }
 
     marcaComoJogavel(){
         $(this.epacoHTML).addClass('marcaJogada')
@@ -166,6 +176,16 @@ class Espaco{
         $(this.epacoHTML).css("top", `${this.y * 10}vmin`)
         $(this.epacoHTML).css("left", `${this.x * 10}vmin`)
 
+        // Define um Evento
+        $(this.epacoHTML).on("click", ()=>{
+            var temPeca = $(this.epacoHTML).find('.peca')
+            if(temPeca.length == 0){ // Espaço não deve ter pecas
+                if(tab.pecaSel){ // alguma peça deve estar selecionada
+                    tab.mover({x: this.x, y: this.y})
+                }
+            }
+        })
+
         return this.epacoHTML
     }
 }
@@ -174,6 +194,8 @@ class Tabuleiro{
     tabuleiro = [];
     tabuleiroHTML = $("#board").get(0);
     jogadorVez = 0;
+
+    pecaSel = undefined;
 
     initTabuleiro(bordLoad){
         /*
@@ -302,39 +324,129 @@ class Tabuleiro{
         return jogadasHabilitadas
     }
 
+    movePosicaoValid(origem, dest, grupo){
+        /*
+            Checa Se a Movimentação é valida
+            
+            Args:
+                - Param:
+                    objeto origem {x,y} | com a origem dos dados
+                    objeto dest {x, y}  | List com destinos das movimentações
+                    int grupo           | -1 Pretas` 1 Brancas
+        */
+        
+        if(dest.x >= 0 && dest.x <= 7
+        && dest.y >= 0 && dest.y <= 7){
+            if(this.tabuleiro[dest.y][dest.x]["peca"] == undefined){ // checa se há peças no destino
+                if(Math.abs(dest.x - origem.x) == 1
+                && origem.y - dest.y == grupo){ // Checa se apenas 1 casa de difrenca
+                    //ValidListdest.push(dest)
+                    return true
+                }
+                
+            }
+        }
+
+    }
+
     pecaValida(xy, grupo){
         /*
             Valida se peça Atual é valida para ser joagada
             
             Args:
-            - Returns: bool | Verdadeiro se valida
+                possiceis movimentações previstas no tabuleiro ou apenas falço
+                - Returns: bool, objeto {x, y} 
+                         
         */
 
         if(grupo == this.jogadorVez){
 
             // Checar Se há alguma posição de captura
             var pecasJogaveis = this.checaJogCaptura()
-
-            // A Pesa selecionada está na lista?
-            var position = pecasJogaveis.filter(function(peca){
-                return(
+            if(pecasJogaveis.length > 0){ // Existe a Posição
+                
+                var position = []
+                // A Pesa selecionada está na lista?
+                for(let peca of pecasJogaveis){
                     peca.origem.x == xy.x &&
                     peca.origem.y == xy.y
-                )
-            })
-            console.log(position.length)
-            if(position.length > 0){
-                return {position};
+
+                    position.push(peca.destino)
+                }
+                if(position.length > 0){return position}
+            }else{ // Não Existe portanto pode efetuar uma jogada normal
+                var validMove = []            
+
+                if(this.movePosicaoValid(xy, {x: xy.x + 1, y: xy.y - grupo}, grupo)){
+                    validMove.push({x: xy.x + 1, y: xy.y - grupo})
+                }
+                if(this.movePosicaoValid(xy, {x: xy.x - 1, y: xy.y - grupo}, grupo)){
+                    validMove.push({x: xy.x - 1, y: xy.y - grupo})
+                }
+
+                if(validMove.length > 0){return validMove}                   
             }
-            
         }
 
-        return false;
+        return false
     }
 
-    mover(origem, destino){
-        
+    capturePeca(posicao){
+        /*
+            Deleta peça do tabuleiro
+            
+            Args:
+                - Param: 
+                    objeto destino | posições a mover {x, y}
+        */
+        this.tabuleiro[posicao.y][posicao.x]["peca"].pecaHTML.remove()
+        this.tabuleiro[posicao.y][posicao.x]["peca"] = undefined
+    }
 
+    mover(destino){
+        /*
+            Move a peças para o destino selecionada
+            se validado.
+            Args:
+                - Param: 
+                    objeto destino | posições a mover {x, y}
+        */
+
+        var moveValids = false;
+
+        // Caso o usuário clique errado        
+        if(this.capturaValida({x: this.pecaSel.x, y: this.pecaSel.y}, destino)){
+            // é uma captura
+            // Some com a peça capturada
+            this.capturePeca({
+                x: destino.x - Math.sign(destino.x - this.pecaSel.x), 
+                y: destino.y - Math.sign(destino.y - this.pecaSel.y), 
+            })
+            moveValids = true
+        }else if(this.movePosicaoValid({x: this.pecaSel.x, y: this.pecaSel.y }, destino, this.pecaSel.grupo)){
+            moveValids = true
+        }
+
+        if(moveValids){
+            // Movimenta a Peça
+            var pecaJogada = this.tabuleiro[this.pecaSel.y][this.pecaSel.x]["peca"]
+
+            this.tabuleiro[destino.y][destino.x]["peca"] = pecaJogada
+            this.tabuleiro[destino.y][destino.x]["espaco"].addPeca(pecaJogada.returnElementHTML())
+
+            this.tabuleiro[this.pecaSel.y][this.pecaSel.x]["peca"] = undefined
+            this.tabuleiro[this.pecaSel.y][this.pecaSel.x]["espaco"].delPeca()       
+
+            // Atualiza o Destino
+            pecaJogada.x = destino.x
+            pecaJogada.y = destino.y        
+
+            // Remover Adição visual
+            $('.marcaJogada').removeClass("marcaJogada")
+
+            // inverte o jogador
+            this.jogadorVez *= -1
+        }
     }
 
 }
