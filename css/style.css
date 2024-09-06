@@ -188,6 +188,13 @@ div#board {
 /*# sourceMappingURL=style.css.map */
 
 /*
+ * Adição a Jogadas
+ */
+.marcaJogada{
+  background-color: #172d4f !important;
+}
+
+/*
  * Adição de CSS
  */
  .regua_horizontal{
@@ -228,3 +235,4 @@ div#board {
   text-align: center;
   height: 25px;
  }
+

@@ -66,10 +66,18 @@ class Peca{
             $(obj.pecaHTML).on('click', function(){
                 var xy = {x: obj.x, y: obj.y}
                 // Checa se é valido para jogada
-                if(tab.pecaValida(xy, obj.grupo)){
+                var pseudoJogadas = tab.pecaValida(xy, obj.grupo)
+                if(pseudoJogadas){
                     // Remove estilo de outros & Adiciona estilo
+                    $('.marcaJogada').removeClass('marcaJogada')
                     $('.selected').removeClass('selected')
                     $(obj.pecaHTML).addClass('selected')
+                    
+                    // Pinta as Celulas jogaveis
+                    for(let jogada of pseudoJogadas.position){
+                        tab.tabuleiro[jogada.destino.y][jogada.destino.x]["espaco"].marcaComoJogavel()
+                    }
+                    
                 };
             })
         }
@@ -138,6 +146,10 @@ class Espaco{
     addPeca(oPeca){
         // define posilção
         this.epacoHTML.appendChild( oPeca )
+    }
+
+    marcaComoJogavel(){
+        $(this.epacoHTML).addClass('marcaJogada')
     }
 
     returnElementHTML(){
@@ -312,7 +324,7 @@ class Tabuleiro{
             })
             console.log(position.length)
             if(position.length > 0){
-                return true;
+                return {position};
             }
             
         }
