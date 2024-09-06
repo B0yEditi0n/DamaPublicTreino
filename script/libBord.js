@@ -20,9 +20,11 @@ class Peca{
     constructor(id, grupo){
         this.id       = id
         switch (grupo) {
-            case 1:
-            case -1:            
-                this.grupo = grupo
+            case 1 :
+            case "1":
+            case -1 :
+            case "-1":            
+                this.grupo = Number(grupo)
                 break;
             case 'W':
                 this.grupo = 1
@@ -72,12 +74,14 @@ class Peca{
         if(this.grupo > 0){
             this.pecaHTML.className = 'pecaBranca'
             if(this.king){
-                $(this.pecaHTML).css('backgroundbackground-image', 'url(img/king1.png)')
+                this.pecaHTML.style.backgroundImage = 'url(img/king1.png)';
+                //$().css('backgroundbackground-image', )
             }
         }else if(this.grupo < 0){
             this.pecaHTML.className = 'pecaPreta'
             if(this.king){
-                $(this.pecaHTML).css('backgroundbackground-image', 'url(img/king2.png)')
+                this.pecaHTML.style.backgroundImage = 'url(img/king2.png)';
+                //$(this.pecaHTML).css('backgroundbackground-image', 'url(img/king2.png)')
             }
         }        
 
