@@ -40,30 +40,7 @@ class Peca{
         new function(){
             
             $(obj.pecaHTML).on('click', function(){
-                //console.log(obj)    
-
-                // Cria um enveto unico para o click
-                /*var selected;
-                var isPlayersTurn = ($(this).parent().attr("class").split(' ')[0] == "player" + Board.playerTurn + "pieces");
-                if (isPlayersTurn) {
-                    if (!Board.continuousjump && pieces[$(this).attr("id")].allowedtomove) {
-                    if ($(this).hasClass('selected')){ selected = true };
-                    $('.piece').each(function (index) {
-                        $('.piece').eq(index).removeClass('selected')
-                    });
-                    if (!selected) {
-                        $(this).addClass('selected');
-                    }
-                    } else {
-                    let exist = "Essa peça não tem permissão para se mover"
-                    let continuous = "você tem que pular a mesma peça"
-                    let message = !Board.continuousjump ? exist : continuous
-                    mensagem(message)
-                    }
-                } else {
-                    mensagem('Não é a vez dessas pessas.')
-
-                }*/
+                
             })
         }
     }
@@ -75,13 +52,11 @@ class Peca{
             this.pecaHTML.className = 'pecaBranca'
             if(this.king){
                 this.pecaHTML.style.backgroundImage = 'url(img/king1.png)';
-                //$().css('backgroundbackground-image', )
             }
         }else if(this.grupo < 0){
             this.pecaHTML.className = 'pecaPreta'
             if(this.king){
                 this.pecaHTML.style.backgroundImage = 'url(img/king2.png)';
-                //$(this.pecaHTML).css('backgroundbackground-image', 'url(img/king2.png)')
             }
         }        
 
@@ -98,6 +73,9 @@ class Espaco{
 
     constructor(id){
         this.id = id
+        var xy = this.idToCord()
+        this.x = xy.x
+        this.y = xy.y
     }
 
     idToCord(){
@@ -116,19 +94,19 @@ class Espaco{
     }
 
     addPeca(oPeca){
-        this.peca = oPeca
-        this.epacoHTML.appendChild( this.peca.returnElementHTML() )
+        // define posilção
+        oPeca.x = this.x
+        oPeca.y = this.y
+        this.epacoHTML.appendChild( oPeca )
     }
 
     returnElementHTML(){
         /* Cria um Elemento HTML com base no ID */
 
-        var xy = this.idToCord()
-
         this.epacoHTML.className = "tile";
         this.epacoHTML.id = `espaco${this.id}`
-        $(this.epacoHTML).css("top", `${xy.y * 10}vmin`)
-        $(this.epacoHTML).css("left", `${xy.x * 10}vmin`)
+        $(this.epacoHTML).css("top", `${this.y * 10}vmin`)
+        $(this.epacoHTML).css("left", `${this.x * 10}vmin`)
 
         return this.epacoHTML
     }
@@ -137,6 +115,7 @@ class Espaco{
 class Tabuleiro{
     tabuleiro = [];
     tabuleiroHTML = $("#board").get(0);
+    jogadorVez = 0;
 
     initTabuleiro(bordLoad){
         // Checa Layout Padrão
@@ -147,6 +126,7 @@ class Tabuleiro{
 
         var index = 0;
         var idxPeca = 0
+        this.jogadorVez = 1; // Inicia pelas Brancas
 
         for(let y=0; y<8; y++){
             // Inicia o espaço vazio de y
@@ -154,33 +134,38 @@ class Tabuleiro{
             for(let x=0; x < 8; x++){
 
                 // Inicia o espaço vazio de x
-                this.tabuleiro[y].push( 0 );
+                this.tabuleiro[y].push( {espaco: Object, peca: undefined} );
                 if((!(y % 2) == 0 && x % 2 == 0) || (y % 2 == 0 && !(x % 2 == 0))){
                     
                     var peca = bordLoad["bord"][y][x];
 
                     // Cria um Epaço no Tabuleiro
-                    this.tabuleiro[y][x] = new Espaco(index)
+                    this.tabuleiro[y][x]["espaco"] = new Espaco(index)
 
                     // Anexa uma Peça (se houver)
                     if(peca != 0){
                         // id, grupo, html
-                        this.tabuleiro[y][x].addPeca( new Peca(idxPeca, peca) )
-
-                        
+                        var oPeca = new Peca(idxPeca, peca)
+                        this.tabuleiro[y][x]["peca"] = oPeca
+                        this.tabuleiro[y][x]["espaco"].addPeca( oPeca.returnElementHTML() )                        
 
                         // Incrementa Index
                         idxPeca++
                     }
 
                     // Anexa HTML
-                    this.tabuleiroHTML.appendChild(this.tabuleiro[y][x].returnElementHTML());
+                    this.tabuleiroHTML.appendChild(this.tabuleiro[y][x]["espaco"].returnElementHTML());
                     
                     // Incremento dos contadores
                     index++
                 }
             }
         }
+    }
+
+    mover(origem, destino){
+        // Checar Se há alguma posição de jogada
+
     }
 
 }
