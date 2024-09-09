@@ -38,6 +38,31 @@ class Peca{
                 this.king = true;
                 break
         }
+        var obj = this;
+        $(obj.pecaHTML).on('click', function(){
+            var xy = {x: obj.x, y: obj.y}
+            // Checa se é valido para jogada
+            var pseudoJogadas = tab.pecaValida(xy, obj.grupo)
+            if(pseudoJogadas){ 
+                if(pseudoJogadas.length > 0){
+                    // Alguém é obrigaod a comer
+
+                    // Remove estilo de outros & Adiciona estilo
+                    $('.marcaJogada').removeClass('marcaJogada')
+                    $('.selected').removeClass('selected')
+                    $(obj.pecaHTML).addClass('selected')
+                    
+                    // Pinta as Celulas jogaveis
+                    for(let jogada of pseudoJogadas){
+                        tab.tabuleiro[jogada.y][jogada.x]["espaco"].marcaComoJogavel()
+                    }
+
+                    // Guarda Peça selecionada
+                    tab.pecaSel = obj;
+                }
+            }
+            
+        })
     }
 
     setAsKing(){
@@ -67,33 +92,8 @@ class Peca{
             }
         }
 
-        var obj = this;
-        new function(){
-            $(obj.pecaHTML).on('click', function(){
-                var xy = {x: obj.x, y: obj.y}
-                // Checa se é valido para jogada
-                var pseudoJogadas = tab.pecaValida(xy, obj.grupo)
-                if(pseudoJogadas){ 
-                    if(pseudoJogadas.length > 0){
-                        // Alguém é obrigaod a comer
 
-                        // Remove estilo de outros & Adiciona estilo
-                        $('.marcaJogada').removeClass('marcaJogada')
-                        $('.selected').removeClass('selected')
-                        $(obj.pecaHTML).addClass('selected')
-                        
-                        // Pinta as Celulas jogaveis
-                        for(let jogada of pseudoJogadas){
-                            tab.tabuleiro[jogada.y][jogada.x]["espaco"].marcaComoJogavel()
-                        }
-
-                        // Guarda Peça selecionada
-                        tab.pecaSel = obj;
-                    }
-                }
-                
-            })
-        }
+        // }
 
         return this.pecaHTML
     }
@@ -118,22 +118,44 @@ class Peca{
                 y: this.y - 2,
                 x: this.x - 2,
             })
-            return listRange
         }else{ // para tipo king
-            for(let add=2; add+this.x<=7; add++){
-                listRange.push({
-                    y: this.y + add,
-                    x: this.x + add,
-                })
-            }
-            for(let add=2; add-this.x>=0; add--){
-                listRange.push({
-                    y: this.y - add,
-                    x: this.x - add,
-                })
+            for(let add=2; add<=7; add++){
+                if(this.x + add <= 7
+                && this.y + add <= 7){
+                    listRange.push({
+                        y: this.y + add,
+                        x: this.x + add,
+                    })
+                }
+                
+                if(this.x - add >= 0
+                && this.y - add >= 0){
+                    listRange.push({
+                        x: this.x - add,
+                        y: this.y - add,                        
+                    })
+                }
+
+                if(this.x + add <= 7
+                && this.y - add >= 0){
+                    listRange.push({
+                        x: this.x + add,
+                        y: this.y - add,
+                    })
+                }
+
+                if(this.x - add >= 0
+                && this.y + add <= 7){
+                    listRange.push({
+                        x: this.x - add,
+                        y: this.y + add,                        
+                    })
+                }
             }
 
         }
+
+        return listRange
     }
 
 }
@@ -433,11 +455,13 @@ class Tabuleiro{
 
         // Travar em caso de captura 
         var Caputravel = this.checaJogCaptura();
-        //if(this.capturaValida({x: this.pecaSel.x, y: this.pecaSel.y}, destino)){
         if(Caputravel.length > 0){
-            var caputra = Caputravel.find((c) => c.origem.x == this.pecaSel.x && c.origem.y == this.pecaSel.y)
+            // Checa se a peça seleciona que está fazendo a captura
+            var oCaptura = Caputravel.find((c) => c.destino.x == destino.x && c.destino.y == destino.y)
+            // Checa se o destino selecionado é o da caputra 
+            var dCaptura = Caputravel.find((c) => c.destino.x == destino.x && c.destino.y == destino.y)            
             // é uma captura
-            if(caputra){
+            if(oCaptura && dCaptura){
                 moveValids = true
                 //Some com a peça capturada
                 this.capturePeca({
@@ -474,17 +498,16 @@ class Tabuleiro{
                 pecaJogada.setAsKing() 
                 this.jogadorVez *= -1
             }else{
-                debugger
                 // Checa se Ainda ah posições de captura
                 var novaCaputra = this.checaJogCaptura();
-                var reCaputra = novaCaputra.find((p) => p.origem.x == pecaJogada.x && p.origem.y == pecaJogada.y)
-                if(Caputravel.length > 0 && reCaputra){
+                var reCaputra = novaCaputra.filter((p) => p.origem.x == pecaJogada.x && p.origem.y == pecaJogada.y)
+                if(Caputravel.length > 0 && reCaputra.length > 0){
                     // mantém como selecionada
-                    $(obj.pecaHTML).addClass('selected')
+                    $(pecaJogada.pecaHTML).addClass('selected')
                         
                     // Pinta as Celulas jogaveis
                     for(let jogada of reCaputra){
-                        this.tabuleiro[jogada.y][jogada.x]["espaco"].marcaComoJogavel()
+                        this.tabuleiro[jogada.destino.y][jogada.destino.x]["espaco"].marcaComoJogavel()
                     }
 
                     // Guarda Peça selecionada
