@@ -120,7 +120,18 @@ class Peca{
             })
             return listRange
         }else{ // para tipo king
-            
+            for(let add=2; add+this.x<=7; add++){
+                listRange.push({
+                    y: this.y + add,
+                    x: this.x + add,
+                })
+            }
+            for(let add=2; add-this.x>=0; add--){
+                listRange.push({
+                    y: this.y - add,
+                    x: this.x - add,
+                })
+            }
 
         }
     }
