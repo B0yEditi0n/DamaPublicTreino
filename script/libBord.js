@@ -40,6 +40,11 @@ class Peca{
         }
     }
 
+    setAsKing(){
+        this.king = true;
+        this.pecaHTML.style.backgroundImage = 'url(img/king1.png)';
+    }
+
     returnElementHTML(){
         /*
             Retorna um Element HTML da peça
@@ -446,7 +451,10 @@ class Tabuleiro{
 
             // Remover Adição visual
             $('.marcaJogada').removeClass("marcaJogada")
-
+            
+            //; Checa se a peça se tornou dama
+            if((pecaJogada.y == 0 && pecaJogada.grupo > 0)
+            || (pecaJogada.y == 6 && pecaJogada.grupo < 0)){ pecaJogada.setAsKing() }
             // inverte o jogador
             this.jogadorVez *= -1
         }
