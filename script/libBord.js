@@ -262,7 +262,7 @@ class Tabuleiro{
         */
         // entre essas duas posiçoes há uma peca?
         var xCaptura = destino.x - Math.sign(destino.x - origem.x)
-        var yCaptura = destino.y - Math.sign(destino.y - origem.y )
+        var yCaptura = destino.y - Math.sign(destino.y - origem.y)
 
         // Está dentro dos limites do tabuleiro?
         if(destino.x <= 7 && destino.x >= 0
@@ -275,7 +275,7 @@ class Tabuleiro{
                     // Alguma Peca bloqueia
                     // Posterior
                     var pecaPost = this.tabuleiro[destino.y][destino.x]["peca"]
-                    var pecaAnt = this.tabuleiro[yCaptura - Math.sign(origem.y)][xCaptura - Math.sign(origem.x)]["peca"]
+                    var pecaAnt = this.tabuleiro[yCaptura - Math.sign(destino.y - origem.y)][xCaptura - Math.sign(destino.x - origem.x)]["peca"]
                     if(pecaPost == undefined){
                         // Tem uma peça Anterior? & se sim ela é a de origem?
                         if(pecaAnt == undefined || ( pecaAnt.x  == origem.x && pecaAnt.y == origem.y)){
