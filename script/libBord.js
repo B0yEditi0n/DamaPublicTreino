@@ -71,18 +71,18 @@ class Peca{
                     if(pseudoJogadas.length > 0){
                         // Alguém é obrigaod a comer
 
-                    // Remove estilo de outros & Adiciona estilo
-                    $('.marcaJogada').removeClass('marcaJogada')
-                    $('.selected').removeClass('selected')
-                    $(obj.pecaHTML).addClass('selected')
-                    
-                    // Pinta as Celulas jogaveis
-                    for(let jogada of pseudoJogadas){
-                        tab.tabuleiro[jogada.y][jogada.x]["espaco"].marcaComoJogavel()
-                    }
+                        // Remove estilo de outros & Adiciona estilo
+                        $('.marcaJogada').removeClass('marcaJogada')
+                        $('.selected').removeClass('selected')
+                        $(obj.pecaHTML).addClass('selected')
+                        
+                        // Pinta as Celulas jogaveis
+                        for(let jogada of pseudoJogadas){
+                            tab.tabuleiro[jogada.y][jogada.x]["espaco"].marcaComoJogavel()
+                        }
 
-                    // Guarda Peça selecionada
-                    tab.pecaSel = obj;
+                        // Guarda Peça selecionada
+                        tab.pecaSel = obj;
                     }
                 }
                 
@@ -260,28 +260,25 @@ class Tabuleiro{
             - Return: Bool | Verdadeiro caso seja
 
         */
-
         // entre essas duas posiçoes há uma peca?
         var xCaptura = destino.x - Math.sign(destino.x - origem.x)
         var yCaptura = destino.y - Math.sign(destino.y - origem.y )
 
         // Está dentro dos limites do tabuleiro?
-        if(xCaptura <= 7 && xCaptura >= 0
-        && yCaptura <= 7 && yCaptura >= 0){
+        if(destino.x <= 7 && destino.x >= 0
+        && destino.y <= 7 && destino.y >= 0){
 
             if(this.tabuleiro[yCaptura][xCaptura]["peca"] != undefined){
                 let currentP = this.tabuleiro[yCaptura][xCaptura]["peca"]
                 // há uma peça
                 if(currentP.grupo != this.jogadorVez){ // é Adversária?
-                    // Alguma Peca bloqueia?
-
+                    // Alguma Peca bloqueia
                     // Posterior
                     var pecaPost = this.tabuleiro[destino.y][destino.x]["peca"]
                     var pecaAnt = this.tabuleiro[yCaptura - Math.sign(origem.y)][xCaptura - Math.sign(origem.x)]["peca"]
                     if(pecaPost == undefined){
-                        // Anterior 
-                        if(pecaAnt == undefined
-                        || ( yCaptura - Math.sign(origem.y) == origem.y && xCaptura - Math.sign(origem.x) == origem.x ) ){
+                        // Tem uma peça Anterior? & se sim ela é a de origem?
+                        if(pecaAnt == undefined || ( pecaAnt.x  == origem.x && pecaAnt.y == origem.y)){
                             return true        
                         }
                     }                    
@@ -368,10 +365,10 @@ class Tabuleiro{
                 var position = []
                 // A Pesa selecionada está na lista?
                 for(let peca of pecasJogaveis){
-                    peca.origem.x == xy.x &&
-                    peca.origem.y == xy.y
-
-                    position.push(peca.destino)
+                    if(peca.origem.x == xy.x &&
+                    peca.origem.y == xy.y){
+                        position.push(peca.destino)
+                    }                    
                 }
                 if(position.length > 0){return position}
             }else{ // Não Existe portanto pode efetuar uma jogada normal
@@ -414,15 +411,21 @@ class Tabuleiro{
 
         var moveValids = false;
 
-        // Caso o usuário clique errado        
-        if(this.capturaValida({x: this.pecaSel.x, y: this.pecaSel.y}, destino)){
+        // Travar em caso de captura 
+        var Caputravel = this.checaJogCaptura();
+        //if(this.capturaValida({x: this.pecaSel.x, y: this.pecaSel.y}, destino)){
+        if(Caputravel.length > 0){
+            var caputra = Caputravel.find((c) => c.origem.x == this.pecaSel.x && c.origem.y == this.pecaSel.y)
             // é uma captura
-            // Some com a peça capturada
-            this.capturePeca({
-                x: destino.x - Math.sign(destino.x - this.pecaSel.x), 
-                y: destino.y - Math.sign(destino.y - this.pecaSel.y), 
-            })
-            moveValids = true
+            if(caputra){
+                moveValids = true
+                //Some com a peça capturada
+                this.capturePeca({
+                    x: destino.x - Math.sign(destino.x - this.pecaSel.x), 
+                    y: destino.y - Math.sign(destino.y - this.pecaSel.y), 
+                })
+
+            }
         }else if(this.movePosicaoValid({x: this.pecaSel.x, y: this.pecaSel.y }, destino, this.pecaSel.grupo)){
             moveValids = true
         }
