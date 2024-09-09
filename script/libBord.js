@@ -134,6 +134,9 @@ class Espaco{
     x = -1;
     y = -1;
 
+    //? em casos de recaputra a peça precisa ser travada
+    lockPeca = Object();
+
     constructor(id){
         this.id = id
         var xy = this.idToCord()
@@ -453,11 +456,40 @@ class Tabuleiro{
             // Remover Adição visual
             $('.marcaJogada').removeClass("marcaJogada")
             
-            //; Checa se a peça se tornou dama
+            // Checa se a peça se tornou dama, 
+            //; caso se torne dama ela não pode sair capturando
             if((pecaJogada.y == 0 && pecaJogada.grupo > 0)
-            || (pecaJogada.y == 7 && pecaJogada.grupo < 0)){ pecaJogada.setAsKing() }
-            // inverte o jogador
-            this.jogadorVez *= -1
+            || (pecaJogada.y == 7 && pecaJogada.grupo < 0)){ 
+                pecaJogada.setAsKing() 
+                this.jogadorVez *= -1
+            }else{
+                debugger
+                // Checa se Ainda ah posições de captura
+                var novaCaputra = this.checaJogCaptura();
+                var reCaputra = novaCaputra.find((p) => p.origem.x == pecaJogada.x && p.origem.y == pecaJogada.y)
+                if(Caputravel.length > 0 && reCaputra){
+                    // mantém como selecionada
+                    $(obj.pecaHTML).addClass('selected')
+                        
+                    // Pinta as Celulas jogaveis
+                    for(let jogada of reCaputra){
+                        this.tabuleiro[jogada.y][jogada.x]["espaco"].marcaComoJogavel()
+                    }
+
+                    // Guarda Peça selecionada
+                    this.pecaSel = pecaJogada
+                    this.lockPeca = pecaJogada
+                }
+                else{
+                    // inverte o jogador
+                    this.jogadorVez *= -1
+                    // Remove travamentos
+                    this.lockPeca = Object()
+                }
+
+            }
+
+            
         }
     }
 
