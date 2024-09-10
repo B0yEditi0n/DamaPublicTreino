@@ -42,7 +42,7 @@ class Peca{
         $(obj.pecaHTML).on('click', function(){
             var xy = {x: obj.x, y: obj.y}
             // Checa se é valido para jogada
-            var pseudoJogadas = tab.pecaValida(xy, obj.grupo)
+            var pseudoJogadas = tab.pecaValida(xy, obj.grupo, obj.king)
             if(pseudoJogadas){ 
                 if(pseudoJogadas.length > 0){
                     // Alguém é obrigaod a comer
@@ -363,7 +363,7 @@ class Tabuleiro{
         return jogadasHabilitadas
     }
 
-    movePosicaoValid(origem, dest, grupo){
+    movePosicaoValid(origem, dest, grupo, king){
         /*
             Checa Se a Movimentação é valida
             
@@ -372,26 +372,50 @@ class Tabuleiro{
                     objeto origem {x,y} | com a origem dos dados
                     objeto dest {x, y}  | List com destinos das movimentações
                     int grupo           | -1 Pretas` 1 Brancas
+                    bool king           | peça é do tipo dama?
         */
-        
-        if(dest.x >= 0 && dest.x <= 7
-        && dest.y >= 0 && dest.y <= 7){
-            if(this.tabuleiro[dest.y][dest.x]["peca"] == undefined){ // checa se há peças no destino
-                if(Math.abs(dest.x - origem.x) == 1
-                && origem.y - dest.y == grupo){ // Checa se apenas 1 casa de difrenca
-                    //ValidListdest.push(dest)
-                    return true
+        if(!king){
+            if(dest.x >= 0 && dest.x <= 7
+            && dest.y >= 0 && dest.y <= 7){
+                if(this.tabuleiro[dest.y][dest.x]["peca"] == undefined){ // checa se há peças no destino
+                    if(Math.abs(dest.x - origem.x) == 1
+                    && origem.y - dest.y == grupo){ // Checa se apenas 1 casa de difrenca
+                        //ValidListdest.push(dest)
+                        return true
+                    }
+                    
                 }
-                
+            }
+        }else{
+            // é necessário validar se há peças entre a sua jogada
+            if(dest.x >= 0 && dest.x <= 7
+            && dest.y >= 0 && dest.y <= 7){
+                // progressão                 
+                var xprog = Math.sign(dest.x - origem.x)
+                var yprog = Math.sign(dest.y - origem.y)
+
+                let i = 1;
+                while(i <= Math.abs( dest.x - origem.x ) && i <= Math.abs( dest.y - origem.y )){
+                    if(this.tabuleiro[origem.y + i * yprog][origem.x + i * xprog]["peca"] != undefined){
+                        return false
+                    } 
+                    
+                    i++
+                }
+                // Se passou pelo loop e não achou nenhuma peça
+                return true
             }
         }
 
     }
 
-    pecaValida(xy, grupo){
+    pecaValida(xy, grupo, king){
         /*
             Valida se peça Atual é valida para ser joagada
-            
+            Paramns:
+                objct xy    | cordadas x y da peça atual
+                int grupo   | 1 brancas -1 pretas
+                king        | se é do tipo dama
             Args:
                 possiceis movimentações previstas no tabuleiro ou apenas falço
                 - Returns: bool, objeto {x, y} 
@@ -413,17 +437,44 @@ class Tabuleiro{
                     }                    
                 }
                 if(position.length > 0){return position}
-            }else{ // Não Existe portanto pode efetuar uma jogada normal
-                var validMove = []            
+            }else if(!king){ // Não Existe portanto pode efetuar uma jogada normal
+                var validMove = []           
 
-                if(this.movePosicaoValid(xy, {x: xy.x + 1, y: xy.y - grupo}, grupo)){
+                if(this.movePosicaoValid(xy, {x: xy.x + 1, y: xy.y - grupo}, grupo, false)){
                     validMove.push({x: xy.x + 1, y: xy.y - grupo})
                 }
-                if(this.movePosicaoValid(xy, {x: xy.x - 1, y: xy.y - grupo}, grupo)){
+                if(this.movePosicaoValid(xy, {x: xy.x - 1, y: xy.y - grupo}, grupo, false)){
                     validMove.push({x: xy.x - 1, y: xy.y - grupo})
                 }
 
-                if(validMove.length > 0){return validMove}                   
+                if(validMove.length > 0){return validMove}
+            }else{ // Não existe jogada mas a peça é do tipo king
+                var validMove = []
+                for(let kingMove=1; kingMove<=7; kingMove++){
+                    
+                    if(xy.x + kingMove <=7 && xy.y + kingMove <=7){
+                        if(this.movePosicaoValid(xy, {x: xy.x + kingMove, y: xy.y + kingMove }, grupo, true)){
+                            validMove.push({x: xy.x + kingMove, y: xy.y + kingMove })
+                        }
+                    }
+                    if(xy.x + kingMove <=7 && xy.y - kingMove >=0){
+                        if(this.movePosicaoValid(xy, {x: xy.x + kingMove, y: xy.y - kingMove }, grupo, true)){
+                            validMove.push({x: xy.x + kingMove, y: xy.y - kingMove })
+                        }
+                    }                        
+                    if(xy.x - kingMove >=0 && xy.y + kingMove <=7){
+                        if(this.movePosicaoValid(xy, {x: xy.x - kingMove, y: xy.y + kingMove }, grupo, true)){
+                            validMove.push({x: xy.x - kingMove, y: xy.y + kingMove })
+                        }
+                    }
+                    if(xy.x - kingMove >=0 && xy.y - kingMove >=0){
+                        if(this.movePosicaoValid(xy, {x: xy.x - kingMove, y: xy.y - kingMove }, grupo, true)){
+                            validMove.push({x: xy.x - kingMove, y: xy.y - kingMove })
+                        }
+                    }
+                }
+                if(validMove.length > 0){return validMove}
+                
             }
         }
 
@@ -470,7 +521,7 @@ class Tabuleiro{
                 })
 
             }
-        }else if(this.movePosicaoValid({x: this.pecaSel.x, y: this.pecaSel.y }, destino, this.pecaSel.grupo)){
+        }else if(this.movePosicaoValid({x: this.pecaSel.x, y: this.pecaSel.y }, destino, this.pecaSel.grupo, this.pecaSel.king)){
             moveValids = true
         }
 
