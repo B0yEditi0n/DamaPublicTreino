@@ -13,7 +13,3 @@ https://github.com/codethejason/checkers?tab=readme-ov-file
 
 ## Site de Acesso
 https://b0yediti0n.github.io/DamaPublicTreino/
-
-## Mensão Honrosa
-Base do projeto foi retirada daqui;
-https://github.com/codethejason/checkers?tab=readme-ov-file
