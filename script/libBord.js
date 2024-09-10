@@ -247,12 +247,12 @@ class Tabuleiro{
 
         var bordConfig
         // Checa Layout Padrão
-        if(bordLoad.bord){
+        if(bordLoad && bordLoad["bord"]){
             bordConfig = bordLoad["bord"] 
         }else{
             bordConfig = gameBoard
         }
-        if(bordLoad.playerTurn){
+        if(bordLoad && bordLoad["layerTurn"]){
             this.jogadorVez = bordLoad.playerTurn
         }else{
             this.jogadorVez = 1; // Inicia pelas Brancas
