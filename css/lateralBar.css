@@ -1,4 +1,7 @@
 .headerTop{
+    /*Arrumar Futuramente*/
+    display: none;
+
     position: absolute;
     width: 100%;
     height: 40px;
