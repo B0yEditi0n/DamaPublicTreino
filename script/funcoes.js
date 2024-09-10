@@ -66,10 +66,11 @@ window.onload = function() {
     var initGame = getQueryVariable('config')
     if(initGame != undefined){
         var strIni = decodeURI(initGame)
+        var playerTurn = getQueryVariable("jogador")
         
         //Inicializa o jogo de dama
         if(JSON.parse(strIni)){
-            tab.initTabuleiro({ "playerTurn": 1,"bord": JSON.parse(strIni) });
+            tab.initTabuleiro({ "playerTurn": playerTurn,"bord": JSON.parse(strIni) });
         }
     }
     else{

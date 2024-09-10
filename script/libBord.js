@@ -247,17 +247,21 @@ class Tabuleiro{
 
         var bordConfig
         // Checa Layout Padrão
-        if(bordLoad){
+        if(bordLoad.bord){
             bordConfig = bordLoad["bord"] 
         }else{
             bordConfig = gameBoard
+        }
+        if(bordLoad.playerTurn){
+            this.jogadorVez = bordLoad.playerTurn
+        }else{
+            this.jogadorVez = 1; // Inicia pelas Brancas
         }
 
 
         var index = 0;
         var idxPeca = 0
-        this.jogadorVez = 1; // Inicia pelas Brancas
-
+        
         for(let y=0; y<8; y++){
             // Inicia o espaço vazio de y
             this.tabuleiro.push( [] );
