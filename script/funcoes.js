@@ -40,6 +40,51 @@ class ControleJogadas {
     }
 }
 
+function checkSizeDevice(){
+    // para tornar tudo mais responsivo
+    console.log($(window).width())
+    if($(window).width() <= 600){
+        //; remontar os epaços dos tabuleiros
+        var listTitles = $("#board .tile");
+        for (var title of listTitles){
+            var intId = title.id.replace(/[^0-9\.]+/g, "");
+
+            //? id para cordenadas
+            var y = Math.floor(intId / 4);        
+            if(y % 2 == 0){ // Par
+                var x = 1 + ((intId % 4) * 2)
+            }else{ // impar
+                var x =(intId % 4) * 2
+            }
+            //? Remonta os espaços
+            $(title).css("top", `${y * 12}vmin`)
+            $(title).css("left", `${x * 12}vmin`)
+    
+        }
+    }else{
+        //; caso alguém volte a um tamanho maior
+        //; remontar os epaços dos tabuleiros
+        var listTitles = $("#board .tile");
+        for (var title of listTitles){
+            var intId = title.id.replace(/[^0-9\.]+/g, "");
+
+            //? id para cordenadas
+            var y = Math.floor(intId / 4);        
+            if(y % 2 == 0){ // Par
+                var x = 1 + ((intId % 4) * 2)
+            }else{ // impar
+                var x =(intId % 4) * 2
+            }
+            //? Remonta os espaços
+            $(title).css("top", `${y * 10}vmin`)
+            $(title).css("left", `${x * 10}vmin`)
+    
+        }
+    };
+}
+
+$(window).on("resize", checkSizeDevice)
+
 //var controleJogadas = new ControleJogadas()
 
 $('#voltarJogada').on("click", function(){
@@ -76,4 +121,5 @@ window.onload = function() {
     else{
         tab.initTabuleiro();
     }
+    checkSizeDevice()
 }

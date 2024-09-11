@@ -133,13 +133,14 @@ div#board {
   border-radius: 5px;
   box-shadow: 1px 1px 3px #232621;
   background-color: #E2F0EF;
-  overflow: hidden; }
-  div#board .tile {
-    width: 10vmin;
-    height: 10vmin;
-    position: absolute;
-    background-color: #408080; 
-  }
+  overflow: hidden; 
+}
+div#board .tile {
+  width: 10vmin;
+  height: 10vmin;
+  position: absolute;
+  background-color: #408080; 
+}
   .peca{
     position: absolute;
     width: 8vmin;
@@ -222,3 +223,40 @@ div#board {
   height: 25px;
  }
 
+/*Responsividade para celulares menores*/
+@media only screen and (max-width: 600px) {
+  /*? remodelação do tabuleiro em celulares */
+  div#board {
+    top: calc(50% - 45vmin);
+    left: calc(50% - 45vmin);
+    width: 96vmin;
+    height: 96vmin;
+  }
+  div#board .tile {
+    width: 12vmin;
+    height: 12vmin;
+  }
+
+  /*? Redefinição de posições das reguas */
+  .regua_horizontal{
+    /* top: calc(131% - 40vmin); */
+    top: calc(50% + 53vmin);
+    left: calc(50% - 45vmin);
+    width: 96vmin;
+   }
+   .regua_horizontal div{
+    width: 12vmin;
+   }
+   .regua_vertical{
+    display: flex;
+    flex-direction: column;
+    top: calc(50% - 45vmin);
+    left: 0;
+    height: 96vmin;
+    
+   }
+
+   .regua_vertical div{
+    height: 12vmin;
+   }    
+}
