@@ -224,7 +224,7 @@ div#board .tile {
  }
 
 /*Responsividade para celulares menores*/
-@media only screen and (max-width: 1200px) {
+@media only screen and (max-width: 800px) {
   /*? remodelação do tabuleiro em celulares */
   div#board {
     top: calc(50% - 45vmin);
@@ -255,8 +255,12 @@ div#board .tile {
     height: 96vmin;
     
    }
-
    .regua_vertical div{
     height: 12vmin;
-   }    
+   }
+   /*? peças */
+   .peca{
+    width: 10vmin;
+    height: 10vmin;
+   }
 }
