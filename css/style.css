@@ -224,7 +224,7 @@ div#board .tile {
  }
 
 /*Responsividade para celulares menores*/
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 1200) {
   /*? remodelação do tabuleiro em celulares */
   div#board {
     top: calc(50% - 45vmin);
