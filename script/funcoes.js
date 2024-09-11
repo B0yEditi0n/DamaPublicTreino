@@ -43,7 +43,7 @@ class ControleJogadas {
 function checkSizeDevice(){
     // para tornar tudo mais responsivo
     console.log($(window).width())
-    if($(window).width() <= 600){
+    if($(window).width() <= 1200){
         //; remontar os epaços dos tabuleiros
         var listTitles = $("#board .tile");
         for (var title of listTitles){
