@@ -400,6 +400,7 @@ class Tabuleiro{
 
                 let i = 1;
                 while(i <= Math.abs( dest.x - origem.x ) && i <= Math.abs( dest.y - origem.y )){
+
                     if(this.tabuleiro[origem.y + i * yprog][origem.x + i * xprog]["peca"] != undefined){
                         return false
                     } 
@@ -493,8 +494,13 @@ class Tabuleiro{
                 - Param: 
                     objeto destino | posições a mover {x, y}
         */
-        this.tabuleiro[posicao.y][posicao.x]["peca"].pecaHTML.remove()
-        this.tabuleiro[posicao.y][posicao.x]["peca"] = undefined
+        try{
+            this.tabuleiro[posicao.y][posicao.x]["peca"].pecaHTML.remove()
+            this.tabuleiro[posicao.y][posicao.x]["peca"] = undefined
+        }catch(e){
+            debugger;
+        }
+        
     }
 
     mover(destino){
@@ -507,83 +513,89 @@ class Tabuleiro{
         */
 
         var moveValids = false;
+        var selectPeca = $(".peca").filter(".selected").get(0)
+        
+        if(selectPeca){
+            // evita seleção acidental em caso de captura 
+            var Caputravel = this.checaJogCaptura();
+            if(Caputravel.length > 0){
+                // Checa se a peça seleciona que está fazendo a captura
+                var oCaptura = Caputravel.find((c) => c.destino.x == destino.x && c.destino.y == destino.y)
+                // Checa se o destino selecionado é o da caputra 
+                var dCaptura = Caputravel.find((c) => c.destino.x == destino.x && c.destino.y == destino.y)            
+                // é uma captura
+                if(oCaptura && dCaptura){
+                    moveValids = true
+                    //Some com a peça capturada
+                    this.capturePeca({
+                        x: destino.x - Math.sign(destino.x - this.pecaSel.x), 
+                        y: destino.y - Math.sign(destino.y - this.pecaSel.y), 
+                    })
 
-        // Travar em caso de captura 
-        var Caputravel = this.checaJogCaptura();
-        if(Caputravel.length > 0){
-            // Checa se a peça seleciona que está fazendo a captura
-            var oCaptura = Caputravel.find((c) => c.destino.x == destino.x && c.destino.y == destino.y)
-            // Checa se o destino selecionado é o da caputra 
-            var dCaptura = Caputravel.find((c) => c.destino.x == destino.x && c.destino.y == destino.y)            
-            // é uma captura
-            if(oCaptura && dCaptura){
+                }
+            }else if(
+                // Checa se está dentro do range da dama
+                this.pecaValida({x: this.pecaSel.x, y: this.pecaSel.y }, this.pecaSel.grupo, this.pecaSel.king)
+                .find((r)=>r["x"] == destino.x && r["y"] == destino.y) //&& 
+            ){
                 moveValids = true
-                //Some com a peça capturada
-                this.capturePeca({
-                    x: destino.x - Math.sign(destino.x - this.pecaSel.x), 
-                    y: destino.y - Math.sign(destino.y - this.pecaSel.y), 
-                })
-
             }
-        }else if(this.movePosicaoValid({x: this.pecaSel.x, y: this.pecaSel.y }, destino, this.pecaSel.grupo, this.pecaSel.king)){
-            moveValids = true
-        }
 
-        if(moveValids){
-            // Movimenta a Peça
-            var pecaJogada = this.tabuleiro[this.pecaSel.y][this.pecaSel.x]["peca"]
+            if(moveValids){
+                // Movimenta a Peça
+                var pecaJogada = this.tabuleiro[this.pecaSel.y][this.pecaSel.x]["peca"]
 
-            this.tabuleiro[destino.y][destino.x]["peca"] = pecaJogada
-            try{
-                this.tabuleiro[destino.y][destino.x]["espaco"].addPeca(pecaJogada.returnElementHTML())
-            }catch(e){
-                debugger;
-            }
-            
-
-            this.tabuleiro[this.pecaSel.y][this.pecaSel.x]["peca"] = undefined
-            this.tabuleiro[this.pecaSel.y][this.pecaSel.x]["espaco"].delPeca()       
-
-            // Atualiza o Destino
-            pecaJogada.x = destino.x
-            pecaJogada.y = destino.y        
-
-            // Remover Adição visual
-            $('.marcaJogada').removeClass("marcaJogada")
-            
-            // Checa se a peça se tornou dama, 
-            //; caso se torne dama ela não pode sair capturando
-            if((pecaJogada.y == 0 && pecaJogada.grupo > 0)
-            || (pecaJogada.y == 7 && pecaJogada.grupo < 0)){ 
-                pecaJogada.setAsKing() 
-                this.jogadorVez *= -1
-            }else{
-                // Checa se Ainda ah posições de captura
-                var novaCaputra = this.checaJogCaptura();
-                var reCaputra = novaCaputra.filter((p) => p.origem.x == pecaJogada.x && p.origem.y == pecaJogada.y)
-                if(Caputravel.length > 0 && reCaputra.length > 0){
-                    // mantém como selecionada
-                    $(pecaJogada.pecaHTML).addClass('selected')
-                        
-                    // Pinta as Celulas jogaveis
-                    for(let jogada of reCaputra){
-                        this.tabuleiro[jogada.destino.y][jogada.destino.x]["espaco"].marcaComoJogavel()
-                    }
-
-                    // Guarda Peça selecionada
-                    this.pecaSel = pecaJogada
-                    this.lockPeca = pecaJogada
+                this.tabuleiro[destino.y][destino.x]["peca"] = pecaJogada
+                try{
+                    this.tabuleiro[destino.y][destino.x]["espaco"].addPeca(pecaJogada.returnElementHTML())
+                }catch(e){
+                    debugger;
                 }
-                else{
-                    // inverte o jogador
+                
+
+                this.tabuleiro[this.pecaSel.y][this.pecaSel.x]["peca"] = undefined
+                this.tabuleiro[this.pecaSel.y][this.pecaSel.x]["espaco"].delPeca()       
+
+                // Atualiza o Destino
+                pecaJogada.x = destino.x
+                pecaJogada.y = destino.y        
+
+                // Remover Adição visual
+                $('.marcaJogada').removeClass("marcaJogada")
+                
+                // Checa se a peça se tornou dama, 
+                //; caso se torne dama ela não pode sair capturando
+                if((pecaJogada.y == 0 && pecaJogada.grupo > 0)
+                || (pecaJogada.y == 7 && pecaJogada.grupo < 0)){ 
+                    pecaJogada.setAsKing() 
                     this.jogadorVez *= -1
-                    // Remove travamentos
-                    this.lockPeca = Object()
-                }
+                }else{
+                    // Checa se Ainda ah posições de captura
+                    var novaCaputra = this.checaJogCaptura();
+                    var reCaputra = novaCaputra.filter((p) => p.origem.x == pecaJogada.x && p.origem.y == pecaJogada.y)
+                    if(Caputravel.length > 0 && reCaputra.length > 0){
+                        // mantém como selecionada
+                        $(pecaJogada.pecaHTML).addClass('selected')
+                            
+                        // Pinta as Celulas jogaveis
+                        for(let jogada of reCaputra){
+                            this.tabuleiro[jogada.destino.y][jogada.destino.x]["espaco"].marcaComoJogavel()
+                        }
 
+                        // Guarda Peça selecionada
+                        this.pecaSel = pecaJogada
+                        this.lockPeca = pecaJogada
+                    }
+                    else{
+                        // inverte o jogador
+                        this.jogadorVez *= -1
+                        // Remove travamentos
+                        this.lockPeca = Object()
+                        // Limpa a peça selecionada
+                        this.pecaSel = Object()
+                    }
+                } 
             }
-
-            
         }
     }
 
