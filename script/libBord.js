@@ -534,7 +534,12 @@ class Tabuleiro{
             var pecaJogada = this.tabuleiro[this.pecaSel.y][this.pecaSel.x]["peca"]
 
             this.tabuleiro[destino.y][destino.x]["peca"] = pecaJogada
-            this.tabuleiro[destino.y][destino.x]["espaco"].addPeca(pecaJogada.returnElementHTML())
+            try{
+                this.tabuleiro[destino.y][destino.x]["espaco"].addPeca(pecaJogada.returnElementHTML())
+            }catch(e){
+                debugger;
+            }
+            
 
             this.tabuleiro[this.pecaSel.y][this.pecaSel.x]["peca"] = undefined
             this.tabuleiro[this.pecaSel.y][this.pecaSel.x]["espaco"].delPeca()       

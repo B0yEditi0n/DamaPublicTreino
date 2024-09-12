@@ -42,7 +42,7 @@ class ControleJogadas {
 
 function checkSizeDevice(){
     // para tornar tudo mais responsivo
-    console.log($(window).width())
+    //console.log($(window).width())
     if($(window).width() <= 1200){
         //; remontar os epaços dos tabuleiros
         var listTitles = $("#board .tile");
@@ -107,7 +107,6 @@ function getQueryVariable(variable) {
 }
 
 window.onload = function() {
-    console.log('json;');
     var initGame = getQueryVariable('config')
     if(initGame != undefined){
         var strIni = decodeURI(initGame)

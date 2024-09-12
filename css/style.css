@@ -224,12 +224,12 @@ div#board .tile {
  }
 
 /*Responsividade para celulares menores*/
-@media only screen and (max-width: 1200) {
+@media only screen and (max-width: 1200px) {
   /*? remodelação do tabuleiro em celulares */
   div#board {
     top: calc(50% - 45vmin);
     left: calc(50% - 45vmin);
-    width: 96vmin;
+    width: 96vmin; 
     height: 96vmin;
   }
   div#board .tile {
