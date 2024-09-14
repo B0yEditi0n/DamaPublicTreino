@@ -44,7 +44,7 @@
         // está setando um evento
         reader.onload = async (evento) => {
             var obj = JSON.parse(evento.target.result);
-            window.location.href = `damaPlay.html?config=${JSON.stringify(obj)}`;
+            window.location.href = `damaPlay.html?config=${JSON.stringify(obj.postion)}&jogador=${JSON.stringify(obj.jogador)}`;
         };
         reader.readAsText(this.files[0])
         this.files[0] = "";
