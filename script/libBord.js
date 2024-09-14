@@ -252,7 +252,7 @@ class Tabuleiro{
         }else{
             bordConfig = gameBoard
         }
-        if(bordLoad != undefined && bordLoad["layerTurn"]){
+        if(bordLoad != undefined && bordLoad["playerTurn"]){
             this.jogadorVez = bordLoad.playerTurn
         }else{
             this.jogadorVez = 1; // Inicia pelas Brancas
